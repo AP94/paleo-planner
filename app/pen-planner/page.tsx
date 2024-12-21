@@ -1,13 +1,12 @@
 "use client"; // This is a client component
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { Checkbox, cn } from "@nextui-org/react";
 import { nanoid } from "nanoid";
 import { Biome, Dino, Diet, DinoSpecies, FarmSkill, Flavor, Size, Social, WildSkill, Pen, FoodType } from "@/resources/types";
 import DinoList from "./components/dino-list"
 import PenList from "./components/pen-list";
 import SpeciesSelect from "./components/species-select";
+import DreamstoneCounter from "./components/dreamstone-counter";
 
 const LuckySpecies: DinoSpecies = {
     name: "Lucky",
@@ -34,7 +33,6 @@ export default function PenPlanner() {
     const [pens, setPens] = useState<Pen[]>([]);
     const [largeDreamstoneCount, setLargeDreamstoneCount] = useState(27);
     const [smallDreamstoneCount, setSmallDreamstoneCount] = useState(19);
-    const [ignoreDreamstoneLimit, setIgnoreDreamstoneLimit] = useState(false);
     
     const toggleShowDinoSelection = () => {
         setShowDinoSelection(show => !show);
@@ -54,17 +52,6 @@ export default function PenPlanner() {
         toggleShowDinoSelection();
     }
 
-    const removeDino = (dino: Dino) => {
-        setDinos(dinos => {
-            return dinos.filter(ranchDino => ranchDino.id !== dino.id);
-        });
-        if (dino.species.size === Size.Small) {
-            setSmallDreamstoneCount(count => count + 1);
-        } else {
-            setLargeDreamstoneCount(count => count + 1);
-        }
-    }
-
     const selectOrDeselectDino = (dinoID: string) => {
         if (selectedDino?.id === dinoID) {
             setSelectedDino(null);
@@ -75,6 +62,17 @@ export default function PenPlanner() {
                 setSelectedDino(dinos[i]);
                 return;
             }
+        }
+    }
+
+    const removeDino = (dino: Dino) => {
+        setDinos(dinos => {
+            return dinos.filter(ranchDino => ranchDino.id !== dino.id);
+        });
+        if (dino.species.size === Size.Small) {
+            setSmallDreamstoneCount(count => count + 1);
+        } else {
+            setLargeDreamstoneCount(count => count + 1);
         }
     }
 
@@ -97,6 +95,28 @@ export default function PenPlanner() {
                 largeDreamstones = largeDreamstones + 1;
             }
         }
+    }
+
+    const setPenBiome = (penID: string, biome: Biome) => {
+        setPens((pens) => {
+            return pens.map((pen) => {
+                return pen.id !== penID ? pen : {
+                    ...pen,
+                    biome: biome
+                }
+            })
+        })
+    }
+
+    const setPenFoodType = (penID: string, foodType: FoodType) => {
+        setPens((pens) => {
+            return pens.map((pen) => {
+                return pen.id !== penID ? pen : {
+                    ...pen,
+                    foodType: foodType
+                }
+            })
+        })
     }
 
     const calculateMinSize = (dinos: Dino[]) => {
@@ -194,32 +214,6 @@ export default function PenPlanner() {
         })
     }
 
-    const setPenBiome = (penID: string, biome: Biome) => {
-        setPens((pens) => {
-            return pens.map((pen) => {
-                return pen.id !== penID ? pen : {
-                    ...pen,
-                    biome: biome
-                }
-            })
-        })
-    }
-
-    const setPenFoodType = (penID: string, foodType: FoodType) => {
-        setPens((pens) => {
-            return pens.map((pen) => {
-                return pen.id !== penID ? pen : {
-                    ...pen,
-                    foodType: foodType
-                }
-            })
-        })
-    }
-
-    const toggleIgnoreDSLimit = () => {
-        setIgnoreDreamstoneLimit(ignore => !ignore);
-    }
-
     const convertSmallDSToLarge = () => {
         setSmallDreamstoneCount(count => count - 1);
         setLargeDreamstoneCount(count => count + 1);
@@ -246,90 +240,40 @@ export default function PenPlanner() {
     <div className="h-screen p-4 items-center justify-items-center">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-2 items-center flex-none overflow-hidden">
             <h1 className="text-xl font-bold">Pen Planner</h1>
-            {
-                !showDinoSelection &&
-                <div className="flex flex-col w-full gap-2 min-h-0 grow">
-                    <div className="flex flex-col flex-none">
-                        <DinoList 
-                            dinos={dinos}
-                            selectedDino={selectedDino}
-                            onDinoClicked={selectOrDeselectDino}
-                            onRemoveDinoClicked={removeDino}
-                            onAddDinoClicked={toggleShowDinoSelection}
-                            onMoveToNewPenClicked={() => addSelectedDinoToPen(null)}
-                        />
-                    </div>
-                    <PenList
-                        pens={pens}
-                        onPenClicked={addSelectedDinoToPen}
-                        onRemovePenClicked={removePen}
-                        onRemoveDinoClicked={removeDinoFromPen}
-                        setPenBiome={setPenBiome}
-                        setPenFoodType={setPenFoodType}
+            <div className={`flex flex-col w-full gap-2 min-h-0 grow ${showDinoSelection && "hidden"}`}>
+                <div className="flex flex-col flex-none">
+                    <DinoList 
+                        dinos={dinos}
+                        selectedDino={selectedDino}
+                        onDinoClicked={selectOrDeselectDino}
+                        onRemoveDinoClicked={removeDino}
+                        onAddDinoClicked={toggleShowDinoSelection}
+                        onMoveToNewPenClicked={() => addSelectedDinoToPen(null)}
                     />
                 </div>
-            }
+                <PenList
+                    pens={pens}
+                    onPenClicked={addSelectedDinoToPen}
+                    onRemovePenClicked={removePen}
+                    onRemoveDinoClicked={removeDinoFromPen}
+                    setPenBiome={setPenBiome}
+                    setPenFoodType={setPenFoodType}
+                />
+            </div>
             {
-                !showDinoSelection &&
-                <div id="dreamstone-container" className="flex flex-row w-full font-bold items-center gap-2 h-11">
-                    <div className={`flex flex-row h-[36] items-center gap-1 ${largeDreamstoneCount < 0 ? "text-red-600" : ""} ${ignoreDreamstoneLimit ? "hidden" : ""}`}>
-                        <Image
-                            src="/images/Dreamstone.png"
-                            width={36}
-                            height={36}
-                            alt="Large Dreamstone"
-                        />
-                        {largeDreamstoneCount}
-                    </div>
-                    <div className={`flex flex-col gap-1 ${ignoreDreamstoneLimit ? "hidden" : ""}`}>
-                        <button
-                            className="flex text-4xl justify-center items-center leading-5"
-                            onClick={convertSmallDSToLarge}
-                            >
-                            ←
-                        </button>
-                        <button className="flex text-4xl justify-center items-center leading-5"
-                            onClick={convertLargeDSToSmall}
-                            >
-                            →
-                        </button>
-                    </div>
-                    <div className={`flex flex-row h-[24] items-center gap-1 ${smallDreamstoneCount < 0 ? "text-red-600" : ""} ${ignoreDreamstoneLimit ? "hidden" : ""}`}>
-                        <Image
-                            src="/images/Dreamstone.png"
-                            width={24}
-                            height={24}
-                            alt="Small Dreamstone"
-                        />
-                        {smallDreamstoneCount}
-                    </div>
-                    <div className="flex items-center grow justify-center min-h-6">
-                        <Checkbox
-                        classNames={{
-                                base: cn(
-                                "inline-flex ml-1",
-                                "items-center justify-start",
-                                "cursor-pointer w-full rounded-lg p-0 mr-0"
-                                ),
-                                label: "text-inherit text-center w-24 grow",
-                            }}
-                            size="md"
-                            radius="sm"
-                            isSelected={ignoreDreamstoneLimit}
-                            onValueChange={toggleIgnoreDSLimit}
-                            >
-                            Ignore limit
-                        </Checkbox>
-                    </div>
-                </div>
-            }
-            {
-                showDinoSelection &&
-                <SpeciesSelect
-                    onSpeciesClicked={onSpeciesClicked}
-                    onCloseSpeciesSelect={toggleShowDinoSelection}
+                <DreamstoneCounter
+                    hidden={showDinoSelection}
+                    largeDSCount={largeDreamstoneCount}
+                    smallDSCount={smallDreamstoneCount}
+                    convertSmallDSToLarge={convertSmallDSToLarge}
+                    convertLargeDSToSmall={convertLargeDSToSmall}                
                 />
             }
+            <SpeciesSelect
+                hidden={!showDinoSelection}
+                onSpeciesClicked={onSpeciesClicked}
+                onCloseSpeciesSelect={toggleShowDinoSelection}
+            />
         </div>
     </div>
     )

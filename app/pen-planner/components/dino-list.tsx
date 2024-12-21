@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import { dinoListData } from "@/resources/component-types";
+import { DinoListData } from "@/resources/component-types";
 import { Biome, Diet, FoodType, Pen, Size, Social } from "@/resources/types";
 
-export default function dinoList(data: dinoListData) {
+export default function dinoList(data: DinoListData) {
 
     const dinoListElements = data.dinos.map(dino => (
         <div key={dino.id}
@@ -21,12 +21,13 @@ export default function dinoList(data: dinoListData) {
                 </div>
                 {dino.species.name !== "Lucky" && <button className="w-5 h-5" onClick={() => {data.onRemoveDinoClicked(dino)}}>x</button>}
             </div>
-            <div className="content-center h-12 w-12 shrink-0">
+            <div className="flex place-content-center h-[50px] w-[50px] shrink-0">
                 <Image
                     src={dino.species.image}
                     width={50}
                     height={50}
                     alt={`${dino.species.name} icon`}
+                    className="w-auto h-auto max-w-full max-h-full m-auto"
                 />
             </div>
             {dino.name}

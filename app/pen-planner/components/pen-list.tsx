@@ -51,12 +51,13 @@ export default function PenList(data: PenListData) {
                         />
                     </div>
                 </div>
-                <div className="content-center h-14 w-14 shrink-0">
+                <div className="flex place-content-center h-16 w-16 shrink-0">
                     <Image
                         src={dino.species.image}
-                        width={50}
-                        height={50}
+                        width={64}
+                        height={64}
                         alt={`${dino.species.name} icon`}
+                        className="w-auto h-auto max-h-full m-auto"
                     />
                 </div>
                 {dino.name}

@@ -8,14 +8,17 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
 
     const dinoSpeciesElements = allSpecies.map(dinoSpecies => (
         <div key={dinoSpecies.name}
-            className="flex flex-row items-center min-h-18 w-full bg-amber-200 gap-2 p-1 rounded"
+            className="flex flex-row items-center min-h-18 w-full bg-amber-200 gap-2 py-1 px-2 rounded"
             onClick={() => {data.onSpeciesClicked(dinoSpecies)}}>
-            <Image
-                src={dinoSpecies.image}
-                width={50}
-                height={50}
-                alt={`${dinoSpecies.name} icon`}
-            />
+            <div className="flex place-content-center h-[50px] w-[50px]">
+                <Image
+                    src={dinoSpecies.image}
+                    width={50}
+                    height={50}
+                    alt={`${dinoSpecies.name} icon`}
+                    className="w-auto h-auto max-w-full max-h-full m-auto"
+                />
+            </div>
             <div className="flex grow flex-col">
                 <div className="flex w-full items-center justify-between flex-row">
                     {dinoSpecies.name}
@@ -77,7 +80,8 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
     ));
 
     return (
-        <div id="species-select-overlay" className="flex flex-col bg-amber-100 min-h-0 h-full w-full gap-2 rounded-lg">
+        <div id="species-select-overlay"
+            className={`flex flex-col bg-amber-100 min-h-0 h-full w-full gap-2 rounded-lg ${data.hidden ? "hidden" : ""}`}>
             <div className="flex flex-col grow p-4 overflow-scroll gap-1">
                 {dinoSpeciesElements}
             </div>

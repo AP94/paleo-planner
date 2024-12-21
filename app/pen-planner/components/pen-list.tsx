@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import { PensListData } from "@/resources/component-types";
+import { PenListData } from "@/resources/component-types";
 import { Biome, Diet, FoodType, Pen, Size, Social } from "@/resources/types";
 
-export default function PensList(data: PensListData) {
+export default function PenList(data: PenListData) {
 
     const onPenBiomeSelected = (event: React.ChangeEvent<HTMLSelectElement>, penID: string) => {
         switch (event.target.value) {

@@ -1,6 +1,15 @@
 import { Biome, Dino, DinoSpecies, FoodType, Pen } from "./types";
 
-export interface PensListData {
+export interface dinoListData {
+    dinos: Dino[];
+    selectedDino: Dino|null;
+    onDinoClicked: (dinoID: string) => void;
+    onRemoveDinoClicked: (dino: Dino) => void;
+    onAddDinoClicked: () => void;
+    onMoveToNewPenClicked: () => void;
+}
+
+export interface PenListData {
     pens: Pen[];
     onPenClicked: (penID: string) => void;
     setPenBiome: (penID: string, biome: Biome) => void;

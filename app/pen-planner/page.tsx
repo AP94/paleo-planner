@@ -35,7 +35,6 @@ export default function PenPlanner() {
     const [ignoreDreamstoneLimit, setIgnoreDreamstoneLimit] = useState(false);
     
     const toggleShowDinoSelection = () => {
-        // close the selection popup
         setShowDinoSelection(show => !show);
     }
 
@@ -64,7 +63,11 @@ export default function PenPlanner() {
         }
     }
 
-    const selectDino = (dinoID: string) => {
+    const selectOrDeselectDino = (dinoID: string) => {
+        if (selectedDino?.id === dinoID) {
+            setSelectedDino(null);
+            return;
+        }
         for (let i = 0; i < ranchDinos.length; i++) {
             if (ranchDinos[i].id == dinoID) {
                 setSelectedDino(ranchDinos[i]);
@@ -80,8 +83,18 @@ export default function PenPlanner() {
             ]
         })
         setPens((pens) => {
-            return pens.filter((pen) => pen.id != pen.id)
+            return pens.filter((prevPen) => prevPen.id != pen.id)
         });
+        let largeDreamstones = 0;
+        let smallDreamstones = 0;
+        for (let i = 0; i < pen.dinos.length; i++) {
+            if (pen.dinos[i].species.size === Size.Small) {
+                smallDreamstones = smallDreamstones + 1;
+            }
+            else {
+                largeDreamstones = largeDreamstones + 1;
+            }
+        }
     }
 
     const calculateMinSize = (dinos: Dino[]) => {
@@ -125,10 +138,9 @@ export default function PenPlanner() {
                         return pens.map((pen) => {
                             return pen.id != penID ? pen : 
                             {...pen,
-                                dinos: [...pen.dinos,
-                                    selectedDino],
-                                minSize: calculateMinSize(pen.dinos),
-                                foodPerDay: calculateFoodPerDay(pen.dinos)
+                                dinos: [...pen.dinos, selectedDino],
+                                minSize: calculateMinSize([...pen.dinos, selectedDino]),
+                                foodPerDay: calculateFoodPerDay([...pen.dinos, selectedDino])
                             }
                         })
                     }
@@ -260,7 +272,7 @@ export default function PenPlanner() {
     const dinoListElements = ranchDinos.map(dino => (
         <div key={dino.id}
             className={`flex flex-col items-center place-content-between bg-amber-200 p-1 w-40 shrink-0 rounded border-3 ${selectedDino?.id == dino.id ? "border-[#34A983]" : "border-transparent"}`}
-            onClick={() => selectDino(dino.id)}>
+            onClick={() => selectOrDeselectDino(dino.id)}>
             <div className="flex flex-row h-0 w-full place-content-between">
                 <div className="grid w-9 h-9">
                     <Image
@@ -273,7 +285,7 @@ export default function PenPlanner() {
                 </div>
                 {dino.species.name !== "Lucky" && <button className="w-5 h-5" onClick={() => {removeDino(dino)}}>x</button>}
             </div>
-            <div className="content-center h-14 w-14 shrink-0">
+            <div className="content-center h-12 w-12 shrink-0">
                 <Image
                     src={dino.species.image}
                     width={50}
@@ -525,7 +537,7 @@ export default function PenPlanner() {
                 <button className="justify-self-end h-4" onClick={() => {removePen(pen)}}>X</button>
             </div>
             <div className="flex flex-row flex-wrap text-small gap-x-2">
-                <div>• Foor per day: {pen.foodPerDay}</div>
+                <div>• Food per day: {pen.foodPerDay}</div>
                 <div>• Min size: {pen.minSize} m²</div>
                 <div>• +Happiness: {Math.ceil(pen.minSize * 1.5)}m²</div>
                 <div>• ++Happiness: {pen.minSize * 2}m²</div>
@@ -538,30 +550,33 @@ export default function PenPlanner() {
 
     return (
     <div className="h-screen p-4 items-center justify-items-center">
-        <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-3 items-center flex-none overflow-hidden">
+        <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-2 items-center flex-none overflow-hidden">
             <h1 className="text-xl font-bold">Pen Planner</h1>
-            <div className={`flex flex-col w-full gap-3 min-h-0 grow ${!showDinoSelection ? '' : 'hidden'}`}>
-                <div id="ranch-dinos-list-container" className="flex flex-col h-1/3 flex-none grow-0">
-                    <div className="flex flex-col bg-amber-100 h-full w-full rounded gap-1 p-2 flex-none grow-0">
-                        <div id="ranch-dinos-list" className="flex flex-row min-w-0 grow gap-2 overflow-x-scroll">
+            <div className={`flex flex-col w-full gap-2 min-h-0 grow ${!showDinoSelection ? '' : 'hidden'}`}>
+                <div id="ranch-dinos-list-container" className="flex flex-col flex-none">
+                    <div className="flex flex-col bg-amber-100 h-full w-full rounded gap-1 p-2 flex-none">
+                        <div id="ranch-dinos-list" className="flex flex-row min-w-0 grow gap-1 overflow-x-scroll">
                             {dinoListElements}
                         </div>
-                        <button
-                            className="font-bold"
-                            onClick={toggleShowDinoSelection}>
-                            + Add dino
-                        </button>
+                        <div className="flex flex-row w-full justify-around items-center">
+                            <button
+                                className="font-bold"
+                                onClick={toggleShowDinoSelection}>
+                                Add New Dino
+                            </button>
+                            <button
+                                className={`font-bold ${selectedDino ? "" : "disabled opacity-50"}`}
+                                onClick={() => addSelectedDinoToPen(null)}>
+                                Move to New Pen
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="pens-list-container" className="flex flex-col min-h-0 grow bg-amber-100 rounded p-2 gap-2 overflow-scroll">
                     {penElements}
-                    <button
-                        className={`font-bold ${selectedDino ? "" : "hidden"}`}
-                        onClick={() => addSelectedDinoToPen(null)}>
-                        + New Pen
-                    </button>
                 </div>
-                    <div className={`flex flex-row w-full font-bold items-center gap-2 ${ignoreDreamstoneLimit ? "mt-2" : ""}`}>
+            </div>
+            <div id="dreamstone-container" className={`flex flex-row w-full font-bold items-center gap-2 h-11 ${!showDinoSelection ? '' : 'hidden'}`}>
                     <div className={`flex flex-row h-[36] items-center gap-1 ${largeDreamstoneCount < 0 ? "text-red-600" : ""} ${ignoreDreamstoneLimit ? "hidden" : ""}`}>
                         <Image
                             src="/images/Dreamstone.png"
@@ -611,9 +626,8 @@ export default function PenPlanner() {
                             Ignore limit
                         </Checkbox>
                     </div>
-                </div>
             </div>
-            <div className={`flex flex-col bg-amber-100 min-h-0 h-full w-full gap-2 rounded-lg ${showDinoSelection ? '' : 'hidden'}`}>
+            <div id="species-select-overlay" className={`flex flex-col bg-amber-100 min-h-0 h-full w-full gap-2 rounded-lg ${showDinoSelection ? '' : 'hidden'}`}>
                 <div className="flex flex-col grow p-4 overflow-scroll gap-1">
                     {dinoSpeciesElements}
                 </div>

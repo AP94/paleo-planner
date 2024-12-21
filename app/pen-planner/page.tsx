@@ -45,12 +45,23 @@ export default function PenPlanner() {
             name: species.name,
             species: species
         }]);
+        if (species.size === Size.Small) {
+            setSmallDreamstoneCount(count => count - 1);
+        } else {
+            setLargeDreamstoneCount(count => count - 1);
+        }
     }
 
-    const removeDino = (id: string) => {
+    const removeDino = (dino: Dino) => {
+
         setRanchDinos(dinos => {
-            return dinos.filter(dino => dino.id !== id);
+            return dinos.filter(ranchDino => ranchDino.id !== dino.id);
         });
+        if (dino.species.size === Size.Small) {
+            setSmallDreamstoneCount(count => count + 1);
+        } else {
+            setLargeDreamstoneCount(count => count + 1);
+        }
     }
 
     const selectDino = (dinoID: string) => {
@@ -148,6 +159,7 @@ export default function PenPlanner() {
     }
 
     const removeDinoFromPen = (penID: string, dino: Dino) => {
+        console.log('clicked');
         setRanchDinos((dinos) => {
             return [...dinos, dino];
         });
@@ -234,10 +246,6 @@ export default function PenPlanner() {
     }
 
     useEffect(() => {
-        console.log(pens);
-    }, [pens])
-
-    useEffect(() => {
         if (selectedDino) {
             for (let i = 0; i < ranchDinos.length; i++) {
                 if (ranchDinos[i].id == selectedDino.id) {
@@ -251,31 +259,42 @@ export default function PenPlanner() {
 
     const dinoListElements = ranchDinos.map(dino => (
         <div key={dino.id}
-            className={`flex flex-row items-center min-h-18 w-full bg-amber-200 gap-2 p-1 rounded border-3 ${selectedDino?.id == dino.id ? "border-[#34A983]" : "border-transparent"}`}
+            className={`flex flex-col items-center place-content-between bg-amber-200 p-1 w-40 shrink-0 rounded border-3 ${selectedDino?.id == dino.id ? "border-[#34A983]" : "border-transparent"}`}
             onClick={() => selectDino(dino.id)}>
-            <Image
-                src={dino.species.image}
-                width={50}
-                height={50}
-                alt={`${dino.species.name} icon`}
-            />
-            <div className="flex grow flex-col">
-                <div className="flex w-full items-center justify-between flex-row">
-                    {dino.name}
-                    {dino.species.name !== "Lucky" ? <button className="" onClick={() => {removeDino(dino.id)}}>X</button> : <></>}
-                </div>
-                <div className="flex w-full flex-row gap-1">
+            <div className="flex flex-row h-0 w-full place-content-between">
+                <div className="grid w-9 h-9">
                     <Image
-                        src={`/images/biomes/${dino.species.biome}.png`}
-                        width={36}
-                        height={36}
-                        alt={`${dino.species.biome} Icon`}
-                        className="place-self-center rounded-full border-2 border-[#35A983]"
+                        src="/images/Dreamstone.png"
+                        width={dino.species.size == Size.Small ? 24 : 32}
+                        height={dino.species.size == Size.Small ? 24 : 32}
+                        alt={`${dino.species.size == Size.Small ? "Small" : "Large"} dreamstone icon`}
+                        className="place-self-center"
                     />
+                </div>
+                {dino.species.name !== "Lucky" && <button className="w-5 h-5" onClick={() => {removeDino(dino)}}>x</button>}
+            </div>
+            <div className="content-center h-14 w-14 shrink-0">
+                <Image
+                    src={dino.species.image}
+                    width={50}
+                    height={50}
+                    alt={`${dino.species.name} icon`}
+                />
+            </div>
+            {dino.name}
+            <div className="flex flex-row w-full place-content-center gap-2">
+                <Image
+                    src={`/images/biomes/${dino.species.biome}.png`}
+                    width={30}
+                    height={30}
+                    alt={`${dino.species.biome} Icon`}
+                    className="place-self-center rounded-full border-2 border-[#35A983] h-9 w-9"
+                />
+                <div className="grid grid-rows-2 grid-cols-2 gap-1">
                     <Image
                         src={`/images/food/${dino.species.diet}.png`}
-                        width={36}
-                        height={36}
+                        width={30}
+                        height={30}
                         alt={`${dino.species.diet} Icon`}
                         className={`place-self-center rounded-lg border-2 ${
                             dino.species.diet === Diet.Carnivore ?
@@ -287,44 +306,25 @@ export default function PenPlanner() {
                     />
                     <Image
                         src={`/images/social/${dino.species.social}.png`}
-                        width={36}
-                        height={36}
+                        width={30}
+                        height={30}
                         alt={`${dino.species.social} Icon`}
                         className="place-self-center rounded-lg border-2 border-[#703D1C]"
                     />
                     <Image
                         src={`/images/farm-skills/${dino.species.farmSkill}.png`}
-                        width={36}
-                        height={36}
+                        width={30}
+                        height={30}
                         alt={`${dino.species.farmSkill} Icon`}
                         className="place-self-center rounded-lg border-2 border-[#34A983]"
                     />
                     <Image
                         src={`/images/wild-skills/${dino.species.wildSkill}.png`}
-                        width={36}
-                        height={36}
+                        width={30}
+                        height={30}
                         alt={`${dino.species.wildSkill} Icon`}
                         className="place-self-center rounded-lg border-2 border-[#34A983]"
                     />
-                    <div className="grid w-9 h-9">
-                        {dino.species.size === Size.Small ?
-                            <Image
-                                    src="/images/Dreamstone.png"
-                                    width={24}
-                                    height={24}
-                                    alt="Small Dreamstone"
-                                    className="place-self-center"
-                                />
-                            :
-                            <Image
-                                    src="/images/Dreamstone.png"
-                                    width={36}
-                                    height={36}
-                                    alt="Large Dreamstone"
-                                    className="place-self-center"
-                            />
-                        }
-                    </div>
                 </div>
             </div>
         </div>
@@ -403,11 +403,22 @@ export default function PenPlanner() {
     const getPenDinoElements = (pen: Pen) => {
         return pen.dinos.map((dino) => (
             <div key={dino.id}
-                className="flex flex-col items-center gap-1 min-w-20 max-w-1/2 rounded bg-amber-300 p-1">
-                <div className="flex flex-row self-end">
+                className="flex flex-col items-center w-full place-content-between bg-amber-200 p-1">
+                <div className="flex flex-row self-end h-0">
                     <button className="h-5 w-5" onClick={() => removeDinoFromPen(pen.id, dino)}>X</button>
                 </div>
-                <div className="content-center h-14">
+                <div className="flex flex-row h-0 w-full place-content-between">
+                    <div className="grid w-9 h-9">
+                        <Image
+                            src="/images/Dreamstone.png"
+                            width={dino.species.size == Size.Small ? 24 : 32}
+                            height={dino.species.size == Size.Small ? 24 : 32}
+                            alt={`${dino.species.size == Size.Small ? "Small" : "Large"} dreamstone icon`}
+                            className="place-self-center"
+                        />
+                    </div>
+                </div>
+                <div className="content-center h-14 w-14 shrink-0">
                     <Image
                         src={dino.species.image}
                         width={50}
@@ -416,38 +427,13 @@ export default function PenPlanner() {
                     />
                 </div>
                 {dino.name}
-                <div className="flex flex-row gap-1">
-                    <div className="grid w-9 h-9">
-                        <Image
-                            src="/images/Dreamstone.png"
-                            width={dino.species.size == Size.Small ? 24 : 36}
-                            height={dino.species.size == Size.Small ? 24 : 36}
-                            alt={`${dino.species.size == Size.Small ? "Small" : "Large"} dreamstone icon`}
-                            className="place-self-center"
-                        />
-                    </div>
+                <div className="flex flex-row w-full place-content-center gap-2">
                     <Image
-                        src={`/images/farm-skills/${dino.species.farmSkill}.png`}
-                        width={36}
-                        height={36}
-                        alt={`${dino.species.farmSkill} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#34A983]"
-                    />
-                    <Image
-                        src={`/images/wild-skills/${dino.species.wildSkill}.png`}
-                        width={36}
-                        height={36}
-                        alt={`${dino.species.wildSkill} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#34A983]"
-                    />
-                </div>
-                <div className="flex flex-row gap-1">
-                <Image
                         src={`/images/biomes/${dino.species.biome}.png`}
                         width={36}
                         height={36}
                         alt={`${dino.species.biome} Icon`}
-                        className="place-self-center rounded-full border-2 border-[#35A983]"
+                        className="place-self-center rounded-full border-2 border-[#35A983] h-9 w-9"
                     />
                     <Image
                         src={`/images/food/${dino.species.diet}.png`}
@@ -469,11 +455,30 @@ export default function PenPlanner() {
                         alt={`${dino.species.social} Icon`}
                         className="place-self-center rounded-lg border-2 border-[#703D1C]"
                     />
+                    <Image
+                        src={`/images/farm-skills/${dino.species.farmSkill}.png`}
+                        width={36}
+                        height={36}
+                        alt={`${dino.species.farmSkill} Icon`}
+                        className="place-self-center rounded-lg border-2 border-[#34A983]"
+                    />
+                    <Image
+                        src={`/images/wild-skills/${dino.species.wildSkill}.png`}
+                        width={36}
+                        height={36}
+                        alt={`${dino.species.wildSkill} Icon`}
+                        className="place-self-center rounded-lg border-2 border-[#34A983]"
+                    />
                 </div>
-                <div className="flex flex-col">
-                    {(dino.species.biome !== Biome.Farm && dino.species.biome !== pen.biome) && `Dino prefers a ${dino.species.biome} biome`}
-                    {(dino.species.diet !== Diet.Omnivore && dino.species.diet as string != pen.foodType as string) && `Dino prefers ${dino.species.diet} food`}
-
+                <div className="flex flex-col text-red-600">
+                    <ul>
+                        <li>{(dino.species.biome !== Biome.Farm && dino.species.biome !== pen.biome) && `Dino prefers a ${dino.species.biome} biome`}</li>
+                        <li>{(dino.species.diet !== Diet.Omnivore && dino.species.diet as string != pen.foodType as string) && `Dino needs ${dino.species.diet} food`}</li>
+                        <li>{(dino.species.social === Social.Loner && pen.dinos.length > 1) && "Dino wants no penmates"}</li>
+                        <li>{(dino.species.social === Social.Pack && pen.dinos.length < 2) && "Dino wants at least 1 penmate"}</li>
+                        <li>{(dino.species.social === Social.Pack && pen.dinos.length > 3) && "Dino wants no more than 2 penmates"}</li>
+                        <li>{(dino.species.social === Social.Herd && pen.dinos.length < 3) && "Dino wants at least 2 penmates"}</li>
+                    </ul>
                 </div>
             </div>
         ));
@@ -481,7 +486,7 @@ export default function PenPlanner() {
 
     const penElements = pens.map(pen => (
         <div key={pen.id}
-            className="flex flex-col w-full bg-amber-200 border-3 rounded border-amber-400 p-2"
+            className="flex flex-col w-full bg-amber-300 border-3 rounded border-amber-400 p-2"
             onClick={() => addSelectedDinoToPen(pen.id)}>
             <div className="flex flex-row w-full">
                 <div className="flex flex-row flex-wrap grow gap-2 text-small">
@@ -493,7 +498,7 @@ export default function PenPlanner() {
                             alt={`${pen.biome} Icon`}
                             className="place-self-center rounded-full border-2 border-[#35A983]"
                         />
-                        <select onChange={(event) => onPenBiomeSelected(event, pen.id)}>
+                        <select onChange={(event) => onPenBiomeSelected(event, pen.id)} defaultValue={pen.biome}>
                             <option value={Biome.Farm}>{Biome.Farm}</option>
                             <option value={Biome.Valley}>{Biome.Valley}</option>
                             <option value={Biome.Forest}>{Biome.Forest}</option>
@@ -506,19 +511,24 @@ export default function PenPlanner() {
                             width={36}
                             height={36}
                             alt={`${pen.foodType} Icon`}
-                            className="place-self-center rounded-full border-2 border-[#35A983]"
+                            className={`place-self-center h-full rounded-full border-2 ${
+                                pen.foodType === FoodType.Meat ?
+                                "border-[#CD303D]" :
+                                "border-[#83BA4F]"}`}
                         />
-                        <select onChange={(event) => onPenFoodSelected(event, pen.id)}>
+                        <select onChange={(event) => onPenFoodSelected(event, pen.id)}  defaultValue={pen.foodType}>
                             <option value={FoodType.Plant}>{FoodType.Plant}</option>
                             <option value={FoodType.Meat}>{FoodType.Meat}</option>
                         </select>
                     </div>
-                    <div>Foor per day: {pen.foodPerDay}</div>
-                    <div>• Min size: {pen.minSize} m²</div>
-                    <div>• + Happiness: {Math.ceil(pen.minSize * 1.5)}m²</div>
-                    <div>• ++ Happiness: {pen.minSize * 2}m²</div>
                 </div>
                 <button className="justify-self-end h-4" onClick={() => {removePen(pen)}}>X</button>
+            </div>
+            <div className="flex flex-row flex-wrap text-small gap-x-2">
+                <div>• Foor per day: {pen.foodPerDay}</div>
+                <div>• Min size: {pen.minSize} m²</div>
+                <div>• +Happiness: {Math.ceil(pen.minSize * 1.5)}m²</div>
+                <div>• ++Happiness: {pen.minSize * 2}m²</div>
             </div>
             <div className="flex flex-row grow flex-wrap gap-2">
                 {getPenDinoElements(pen)}
@@ -527,18 +537,13 @@ export default function PenPlanner() {
     ))
 
     return (
-    <div className="min-h-screen h-64 p-4 items-center justify-items-center">
-        <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-3 items-center flex-none">
+    <div className="h-screen p-4 items-center justify-items-center">
+        <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-3 items-center flex-none overflow-hidden">
             <h1 className="text-xl font-bold">Pen Planner</h1>
-            <div className={`flex flex-col w-full grow ${!showDinoSelection ? '' : 'hidden'}`}>
-                <div>
-                    Instructions v
-                    [collapsible container]
-                </div>
-                <h2 className="font-bold self-center">Dinos</h2>
-                <div id="ranch-dinos-list-container" className="flex flex-col h-2/6 flex-none grow-0">
-                    <div className="flex flex-col bg-amber-100 h-full w-full rounded gap-2 p-2 flex-none grow-0">
-                        <div id="ranch-dinos-list" className="flex flex-col min-h-0 w-full gap-2 overflow-scroll">
+            <div className={`flex flex-col w-full gap-3 min-h-0 grow ${!showDinoSelection ? '' : 'hidden'}`}>
+                <div id="ranch-dinos-list-container" className="flex flex-col h-1/3 flex-none grow-0">
+                    <div className="flex flex-col bg-amber-100 h-full w-full rounded gap-1 p-2 flex-none grow-0">
+                        <div id="ranch-dinos-list" className="flex flex-row min-w-0 grow gap-2 overflow-x-scroll">
                             {dinoListElements}
                         </div>
                         <button
@@ -548,8 +553,7 @@ export default function PenPlanner() {
                         </button>
                     </div>
                 </div>
-                <h2 className="font-bold self-center">Pens</h2>
-                <div id="pens-list-container" className="flex flex-col h-1/2 bg-amber-100 rounded p-2 gap-2 overflow-scroll">
+                <div id="pens-list-container" className="flex flex-col min-h-0 grow bg-amber-100 rounded p-2 gap-2 overflow-scroll">
                     {penElements}
                     <button
                         className={`font-bold ${selectedDino ? "" : "hidden"}`}

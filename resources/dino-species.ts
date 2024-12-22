@@ -213,7 +213,7 @@ export const Kentrosaurus: DinoSpecies = {
     biome: Biome.Forest,
     flavor: Flavor.Fragrant,
     wildSkill: WildSkill.Slasher,
-    farmSkill: FarmSkill.GroundHarvester
+    farmSkill: FarmSkill.Harvester
 };
 
 export const Megalosaurus: DinoSpecies = {
@@ -369,7 +369,7 @@ export const Stegosaurus: DinoSpecies = {
     biome: Biome.Forest,
     flavor: Flavor.Earthy,
     wildSkill: WildSkill.Slasher,
-    farmSkill: FarmSkill.GroundHarvester
+    farmSkill: FarmSkill.Harvester
 };
 
 export const Styracosaurus: DinoSpecies = {
@@ -393,7 +393,7 @@ export const Therizinosaurus: DinoSpecies = {
     biome: Biome.Forest,
     flavor: Flavor.Fragrant,
     wildSkill: WildSkill.Slasher,
-    farmSkill: FarmSkill.GroundHarvester
+    farmSkill: FarmSkill.Harvester
 };
 
 export const Triceratops: DinoSpecies = {
@@ -465,7 +465,7 @@ export const Wuerhosaurus: DinoSpecies = {
     biome: Biome.Valley,
     flavor: Flavor.Earthy,
     wildSkill: WildSkill.Slasher,
-    farmSkill: FarmSkill.GroundHarvester
+    farmSkill: FarmSkill.Harvester
 };
 
 

@@ -10,7 +10,7 @@ export default function dinoList(data: DinoListData) {
             className={`flex flex-col items-center place-content-between bg-amber-200 p-1 w-40 shrink-0 rounded border-3 ${data.selectedDino?.id == dino.id ? "border-[#34A983]" : "border-transparent"}`}
             onClick={() => data.onDinoClicked(dino.id)}>
             <div className="flex flex-row h-0 w-full place-content-between">
-                <div className="grid w-9 h-9">
+                <div className="grid w-9 h-9 rounded-full bg-white">
                     <Image
                         src="/images/Dreamstone.png"
                         width={dino.species.size == Size.Small ? 24 : 32}

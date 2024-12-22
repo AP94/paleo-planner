@@ -43,7 +43,7 @@ export enum FarmSkill {
     Clearer = "Clearer",
     Tiller = "Tiller",
     Waterer = "Waterer",
-    GroundHarvester = "GroundHarvester",
+    Harvester = "Harvester",
     Tender = "Tender"
 }
 

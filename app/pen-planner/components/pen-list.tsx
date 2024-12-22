@@ -5,8 +5,8 @@ import { Biome, Diet, FoodType, Pen, Size, Social } from "@/resources/types";
 
 export default function PenList(data: PenListData) {
 
-    const onPenBiomeSelected = (event: React.ChangeEvent<HTMLSelectElement>, penID: string) => {
-        switch (event.target.value) {
+    const onPenBiomeSelected = (biome: string, penID: string) => {
+        switch (biome) {
             case (Biome.Valley):
                 data.setPenBiome(penID, Biome.Valley);
                 break;
@@ -22,8 +22,8 @@ export default function PenList(data: PenListData) {
         }
     }
 
-    const onPenFoodSelected = (event: React.ChangeEvent<HTMLSelectElement>, penID: string) => {
-        switch (event.target.value) {
+    const onPenFoodSelected = (foodType: string, penID: string) => {
+        switch (foodType) {
             case (FoodType.Meat):
                 data.setPenFoodType(penID, FoodType.Meat);
                 break;
@@ -36,12 +36,12 @@ export default function PenList(data: PenListData) {
     const getPenDinoElements = (pen: Pen) => {
         return pen.dinos.map((dino) => (
             <div key={dino.id}
-                className="flex flex-col items-center w-full place-content-between bg-amber-200 p-1">
+                className="flex flex-col items-center w-full place-content-between bg-amber-300 border-3 rounded border-amber-400 p-1">
                 <div className="flex flex-row self-end h-0">
                     <button className="h-5 w-5" onClick={() => data.onRemoveDinoClicked(pen.id, dino)}>X</button>
                 </div>
                 <div className="flex flex-row h-0 w-full place-content-between">
-                    <div className="grid w-9 h-9">
+                    <div className="grid w-9 h-9 rounded-full bg-white">
                         <Image
                             src="/images/Dreamstone.png"
                             width={dino.species.size == Size.Small ? 24 : 32}
@@ -104,14 +104,14 @@ export default function PenList(data: PenListData) {
                         className="place-self-center rounded-lg border-2 border-[#34A983]"
                     />
                 </div>
-                <div className="flex flex-col text-red-600">
+                <div className="flex flex-col font-bold text-red-700">
                     <ul>
-                        <li>{(dino.species.biome !== Biome.Farm && dino.species.biome !== pen.biome) && `Dino prefers a ${dino.species.biome} biome`}</li>
-                        <li>{(dino.species.diet !== Diet.Omnivore && dino.species.diet as string != pen.foodType as string) && `Dino needs ${dino.species.diet} food`}</li>
-                        <li>{(dino.species.social === Social.Loner && pen.dinos.length > 1) && "Dino wants no penmates"}</li>
-                        <li>{(dino.species.social === Social.Pack && pen.dinos.length < 2) && "Dino wants at least 1 penmate"}</li>
-                        <li>{(dino.species.social === Social.Pack && pen.dinos.length > 3) && "Dino wants no more than 2 penmates"}</li>
-                        <li>{(dino.species.social === Social.Herd && pen.dinos.length < 3) && "Dino wants at least 2 penmates"}</li>
+                        <li>{(dino.species.biome !== Biome.Farm && dino.species.biome !== pen.biome) && `❗ Dino prefers a ${dino.species.biome} biome`}</li>
+                        <li>{(dino.species.diet !== Diet.Omnivore && dino.species.diet as string != pen.foodType as string) && `❗ Dino needs ${dino.species.diet} food`}</li>
+                        <li>{(dino.species.social === Social.Loner && pen.dinos.length > 1) && "❗ Dino wants no penmates"}</li>
+                        <li>{(dino.species.social === Social.Pack && pen.dinos.length < 2) && "❗ Dino wants at least 1 penmate"}</li>
+                        <li>{(dino.species.social === Social.Pack && pen.dinos.length > 3) && "❗ Dino wants no more than 2 penmates"}</li>
+                        <li>{(dino.species.social === Social.Herd && pen.dinos.length < 3) && "❗ Dino wants at least 2 penmates"}</li>
                     </ul>
                 </div>
             </div>
@@ -120,7 +120,7 @@ export default function PenList(data: PenListData) {
 
     const penElements = data.pens.map(pen => (
         <div key={pen.id}
-            className="flex flex-col w-full bg-amber-300 border-3 rounded border-amber-400 p-2"
+            className="flex flex-col w-full bg-amber-200 border-3 rounded border-amber-400 p-2"
             onClick={() => data.onPenClicked(pen.id)}>
             <div className="flex flex-row w-full">
                 <div className="flex flex-row flex-wrap grow gap-2 text-small">
@@ -132,7 +132,10 @@ export default function PenList(data: PenListData) {
                             alt={`${pen.biome} Icon`}
                             className="place-self-center rounded-full border-2 border-[#35A983]"
                         />
-                        <select onChange={(event) => onPenBiomeSelected(event, pen.id)} defaultValue={pen.biome}>
+                        <select key="pen-biome-select"
+                            onChange={(event) => onPenBiomeSelected(event.target.value, pen.id)}
+                            value={pen.biome}
+                            className="h-6 rounded bg-amber-100 border-2 border-amber-400">
                             <option value={Biome.Farm}>{Biome.Farm}</option>
                             <option value={Biome.Valley}>{Biome.Valley}</option>
                             <option value={Biome.Forest}>{Biome.Forest}</option>
@@ -150,7 +153,10 @@ export default function PenList(data: PenListData) {
                                 "border-[#CD303D]" :
                                 "border-[#83BA4F]"}`}
                         />
-                        <select onChange={(event) => onPenFoodSelected(event, pen.id)}  defaultValue={pen.foodType}>
+                        <select key="pen-food-select"
+                            onChange={(event) => onPenFoodSelected(event.target.value, pen.id)}
+                            value={pen.foodType}
+                            className="h-6 rounded bg-amber-100 border-2 border-amber-400">
                             <option value={FoodType.Plant}>{FoodType.Plant}</option>
                             <option value={FoodType.Meat}>{FoodType.Meat}</option>
                         </select>

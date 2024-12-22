@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import { saveAs } from 'file-saver';
 import { Biome, Dino, Diet, DinoSpecies, FarmSkill, Flavor, Size, Social, WildSkill, Pen, FoodType } from "@/resources/types";
 import DinoList from "./components/dino-list"
 import PenList from "./components/pen-list";
@@ -63,6 +64,34 @@ export default function PenPlanner() {
                 return;
             }
         }
+    }
+
+    const updateDinoName = (dinoID: string, name: string) => {
+        setDinos((dinos) => {
+            return dinos.map((dino) => {
+                return dino.id !== dinoID ? dino : {
+                    ...dino,
+                    name: name
+                }
+            })
+        })
+    }
+
+    const updatePenDinoName = (penID: string, dinoID: string, name:string) => {
+        setPens((pens) => {
+            return pens.map((pen) => {
+                return pen.id !== penID ? pen : {
+                    ...pen,
+                    dinos: pen.dinos.map((dino) => {
+                        return dino.id !== dinoID ? dino :
+                        {
+                            ...dino,
+                            name: name
+                        }
+                    })
+                }
+            })
+        })
     }
 
     const removeDino = (dino: Dino) => {
@@ -249,6 +278,7 @@ export default function PenPlanner() {
                         onRemoveDinoClicked={removeDino}
                         onAddDinoClicked={toggleShowDinoSelection}
                         onMoveToNewPenClicked={() => addSelectedDinoToPen(null)}
+                        updateDinoName={updateDinoName}
                     />
                 </div>
                 <PenList
@@ -258,6 +288,7 @@ export default function PenPlanner() {
                     onRemoveDinoClicked={removeDinoFromPen}
                     setPenBiome={setPenBiome}
                     setPenFoodType={setPenFoodType}
+                    updatePenDinoName={updatePenDinoName}
                 />
             </div>
             {

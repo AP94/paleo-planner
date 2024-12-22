@@ -33,6 +33,10 @@ export default function PenList(data: PenListData) {
         }
     }
 
+    const onDinoNameChange = (penID: string, dinoID: string, name: string) => {
+        data.updatePenDinoName(penID, dinoID, name);
+    }
+
     const getPenDinoElements = (pen: Pen) => {
         return pen.dinos.map((dino) => (
             <div key={dino.id}
@@ -60,7 +64,12 @@ export default function PenList(data: PenListData) {
                         className="w-auto h-auto max-h-full m-auto"
                     />
                 </div>
-                {dino.name}
+                <div className="flex flex-row my-1">
+                    <input value={dino.name}
+                        onChange={(event) => { onDinoNameChange(pen.id, dino.id, event.target.value) }}
+                        className="text-center w-full bg-amber-300">
+                    </input>
+                </div>
                 <div className="flex flex-row w-full place-content-center gap-2">
                     <Image
                         src={`/images/biomes/${dino.species.biome}.png`}

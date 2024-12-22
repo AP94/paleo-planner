@@ -7,6 +7,7 @@ export interface DinoListData {
     onRemoveDinoClicked: (dino: Dino) => void;
     onAddDinoClicked: () => void;
     onMoveToNewPenClicked: () => void;
+    updateDinoName: (dinoID: string, name: string) => void;
 }
 
 export interface DreamstoneCounterData {
@@ -24,6 +25,7 @@ export interface PenListData {
     setPenFoodType: (penID: string, foodType: FoodType) => void;
     onRemovePenClicked: (pen: Pen) => void;
     onRemoveDinoClicked: (penID: string, dino: Dino) => void;
+    updatePenDinoName: (penID: string, dinoID: string, name: string) => void;
 }
 
 export interface SpeciesSelectData {

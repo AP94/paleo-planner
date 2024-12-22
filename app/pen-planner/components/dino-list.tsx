@@ -4,6 +4,10 @@ import { DinoListData } from "@/resources/component-types";
 import { Biome, Diet, FoodType, Pen, Size, Social } from "@/resources/types";
 
 export default function dinoList(data: DinoListData) {
+    
+    const onDinoNameChange = (dinoID: string, name: string) => {
+        data.updateDinoName(dinoID, name);
+    } 
 
     const dinoListElements = data.dinos.map(dino => (
         <div key={dino.id}
@@ -30,7 +34,12 @@ export default function dinoList(data: DinoListData) {
                     className="w-auto h-auto max-w-full max-h-full m-auto"
                 />
             </div>
-            {dino.name}
+            <div className="flex flex-row">
+                <input value={dino.name}
+                    onChange={(event) => { onDinoNameChange(dino.id, event.target.value) }}
+                    className="text-center w-full my-1 bg-amber-200">
+                </input>
+            </div>
             <div className="flex flex-row w-full place-content-center gap-2">
                 <Image
                     src={`/images/biomes/${dino.species.biome}.png`}

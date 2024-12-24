@@ -109,9 +109,9 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
 
     const dinoSpeciesElements = filteredSpecies.map(dinoSpecies => (
         <div key={dinoSpecies.name}
-            className="flex flex-row items-center min-h-18 w-full bg-amber-200 gap-2 py-1 px-2 rounded"
+            className="flex flex-row items-center min-h-18 w-full bg-amber-200 gap-2 py-1 px-2 rounded sm:py-2 sm:px-3 sm:gap-3"
             onClick={() => {data.onSpeciesClicked(dinoSpecies)}}>
-            <div className="flex place-content-center h-[50px] w-[50px]">
+            <div className="flex place-content-center h-[50px] w-[50px] sm:h-[75px] sm:w-[75px]">
                 <Image
                     src={dinoSpecies.image}
                     width={50}
@@ -121,9 +121,9 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                 />
             </div>
             <div className="flex grow flex-col">
-                <div className="flex w-full items-center justify-between flex-row">
+                <div className="flex w-full items-center justify-between flex-row sm:text-xl">
                     {dinoSpecies.name}
-                    <div className="grid w-9 h-9 rounded-full bg-white">
+                    <div className="grid w-9 h-9 rounded-full bg-white sm:w-10 sm:h-10">
                         <Image
                             src="/images/Dreamstone.png"
                             width={dinoSpecies.size == Size.Small ? 24 : 32}
@@ -133,20 +133,20 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                         />
                     </div>
                 </div>
-                <div className="flex w-full flex-row gap-1">
+                <div className="flex w-5/6 flex-row gap-1 justify-around sm:gap-3">
                     <Image
                         src={`/images/biomes/${dinoSpecies.biome}.png`}
                         width={36}
                         height={36}
                         alt={`${dinoSpecies.biome} Icon`}
-                        className="place-self-center rounded-full border-2 border-[#35A983]"
+                        className="place-self-center rounded-full border-2 border-[#35A983] sm:w-11"
                     />
                     <Image
                         src={`/images/food/${dinoSpecies.diet}.png`}
                         width={36}
                         height={36}
                         alt={`${dinoSpecies.diet} Icon`}
-                        className={`place-self-center rounded-lg border-2 ${
+                        className={`place-self-center rounded-lg border-2 sm:w-11 ${
                             dinoSpecies.diet === Diet.Carnivore ?
                             "border-[#CD303D]" :
                             dinoSpecies.diet === Diet.Herbivore ?
@@ -159,21 +159,21 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                         width={36}
                         height={36}
                         alt={`${dinoSpecies.social} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#703D1C]"
+                        className="place-self-center rounded-lg border-2 border-[#703D1C] sm:w-11"
                     />
                     <Image
                         src={`/images/farm-skills/${dinoSpecies.farmSkill}.png`}
                         width={36}
                         height={36}
                         alt={`${dinoSpecies.farmSkill} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#34A983]"
+                        className="place-self-center rounded-lg border-2 border-[#34A983] sm:w-11"
                     />
                     <Image
                         src={`/images/wild-skills/${dinoSpecies.wildSkill}.png`}
                         width={36}
                         height={36}
                         alt={`${dinoSpecies.wildSkill} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#34A983]"
+                        className="place-self-center rounded-lg border-2 border-[#34A983] sm:w-11"
                     />
                 </div>
             </div>
@@ -182,12 +182,12 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
 
     return (
         <div id="species-select-overlay"
-            className={`flex flex-col bg-amber-100 min-h-0 p-3 h-full w-full gap-2 rounded-lg ${data.hidden ? "hidden" : ""}`}>
-            <div className="flex flex-row p-1">
-                <div className="flex flex-row flex-wrap gap-2">
+            className={`flex flex-col bg-amber-100 min-h-0 p-3 h-full w-full gap-2 rounded-lg ${data.hidden ? "hidden" : ""} sm:p-4`}>
+            <div className="flex flex-row py-1">
+                <div className="flex flex-row flex-wrap gap-2 sm:gap-3">
                     <select id="biome-filter"
                         onChange={(event) => onBiomeFilterSelected(event.target.value)} value={filterOptions.biome}
-                        className="h-6 rounded bg-amber-50 border-2 border-amber-300">
+                        className="h-6 rounded bg-amber-50 border-2 border-amber-300 sm:h-8 md:h-9 md:text-xl">
                         <option value={""}>Biome</option>
                         <option value={Biome.Valley}>{Biome.Valley}</option>
                         <option value={Biome.Forest}>{Biome.Forest}</option>
@@ -195,14 +195,14 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                     </select>
                     <select id="food-filter"
                         onChange={(event) => onFoodFilterSelected(event.target.value)} value={filterOptions.food}
-                        className="h-6 rounded bg-amber-50 border-2 border-amber-300">
+                        className="h-6 rounded bg-amber-50 border-2 border-amber-300 sm:h-8 md:h-9 md:text-xl">
                         <option value={""}>Food Type</option>
                         <option value={FoodType.Plant}>{FoodType.Plant}</option>
                         <option value={FoodType.Meat}>{FoodType.Meat}</option>
                     </select>
                     <select id="social-filter"
                         onChange={(event) => onSocialFilterSelected(event.target.value)} value={filterOptions.social}
-                        className="h-6 rounded bg-amber-50 border-2 border-amber-300">
+                        className="h-6 rounded bg-amber-50 border-2 border-amber-300 sm:h-8 md:h-9 md:text-xl">
                         <option value={""}>Social</option>
                         <option value={Social.Loner}>{Social.Loner}</option>
                         <option value={Social.Pack}>{Social.Pack}</option>
@@ -211,7 +211,7 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                     </select>
                     <select id="farm-skill-filter"
                         onChange={(event) => onFarmSkillFilterSelected(event.target.value)} value={filterOptions.farmSkill}
-                        className="h-6 rounded bg-amber-50 border-2 border-amber-300">
+                        className="h-6 rounded bg-amber-50 border-2 border-amber-300 sm:h-8 md:h-9 md:text-xl">
                         <option value={""}>Farm Skill</option>
                         <option value={FarmSkill.Clearer}>{FarmSkill.Clearer}</option>
                         <option value={FarmSkill.Harvester}>{FarmSkill.Harvester}</option>
@@ -221,7 +221,7 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                     </select>
                     <select id="wild-skill-filter"
                         onChange={(event) => onWildSkillFilterSelected(event.target.value)} value={filterOptions.wildSkill}
-                        className="h-6 rounded bg-amber-50 border-2 border-amber-300">
+                        className="h-6 rounded bg-amber-50 border-2 border-amber-300 sm:h-8 md:h-9 md:text-xl">
                         <option value={""}>Wild Skill</option>
                         <option value={WildSkill.Discoverer}>{WildSkill.Discoverer}</option>
                         <option value={WildSkill.Slasher}>{WildSkill.Slasher}</option>
@@ -232,7 +232,7 @@ export default function SpeciesSelect(data: SpeciesSelectData) {
                     <button className="font-bold px-2" onClick={() => resetFilters()}>Reset</button>
                 </div>
             </div>
-            <div className="flex flex-col grow pt-0 overflow-scroll gap-1">
+            <div className="flex flex-col grow pt-0 overflow-auto gap-1 sm:gap-2 lg:grid lg:grid-cols-2 2xl:grid-cols-3">
                 {dinoSpeciesElements}
             </div>
             <button className="justify-self-end font-bold" onClick={onClose}>Close</button>

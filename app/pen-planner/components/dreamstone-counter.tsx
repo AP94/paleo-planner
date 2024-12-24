@@ -12,39 +12,41 @@ export default function DreamstoneCounter(data: DreamstoneCounterData) {
     
     return (
         <div id="dreamstones-container"
-            className={`flex flex-row w-full font-bold items-center gap-2 h-11 ${data.hidden ? "hidden" : ""}`}>
-            <div className={`flex flex-row h-[36] items-center gap-1 ${data.largeDSCount < 0 ? "text-red-600" : ""} ${ignoreDSLimit ? "hidden" : ""}`}>
-                <Image
-                    src="/images/Dreamstone.png"
-                    width={36}
-                    height={36}
-                    alt="Large Dreamstone"
-                />
-                {data.largeDSCount}
+            className={`flex flex-row w-full font-bold items-center h-11 place-content-around ${data.hidden ? "hidden" : ""} sm:text-lg sm:h-14`}>
+            <div className={`flex flex-row items-center gap-2 ${ignoreDSLimit ? "hidden" : ""} sm:gap-3`}>
+                <div className={`flex flex-row h-[36] items-center gap-1 ${data.largeDSCount < 0 ? "text-red-600" : ""} sm:gap-2`}>
+                    <Image
+                        src="/images/Dreamstone.png"
+                        width={36}
+                        height={36}
+                        alt="Large Dreamstone"
+                    />
+                    {data.largeDSCount}
+                </div>
+                <div className="flex flex-col gap-1 sm:gap-2">
+                    <button
+                        className="flex text-4xl justify-center items-center leading-5"
+                        onClick={data.convertSmallDSToLarge}
+                        >
+                        ←
+                    </button>
+                    <button className="flex text-4xl justify-center items-center leading-5"
+                        onClick={data.convertLargeDSToSmall}
+                        >
+                        →
+                    </button>
+                </div>
+                <div className={`flex flex-row h-[24] items-center gap-1 ${data.smallDSCount < 0 ? "text-red-600" : ""} sm:gap-2`}>
+                    <Image
+                        src="/images/Dreamstone.png"
+                        width={24}
+                        height={24}
+                        alt="Small Dreamstone"
+                    />
+                    {data.smallDSCount}
+                </div>
             </div>
-            <div className={`flex flex-col gap-1 ${ignoreDSLimit ? "hidden" : ""}`}>
-                <button
-                    className="flex text-4xl justify-center items-center leading-5"
-                    onClick={data.convertSmallDSToLarge}
-                    >
-                    ←
-                </button>
-                <button className="flex text-4xl justify-center items-center leading-5"
-                    onClick={data.convertLargeDSToSmall}
-                    >
-                    →
-                </button>
-            </div>
-            <div className={`flex flex-row h-[24] items-center gap-1 ${data.smallDSCount < 0 ? "text-red-600" : ""} ${ignoreDSLimit ? "hidden" : ""}`}>
-                <Image
-                    src="/images/Dreamstone.png"
-                    width={24}
-                    height={24}
-                    alt="Small Dreamstone"
-                />
-                {data.smallDSCount}
-            </div>
-            <div className="flex items-center grow justify-center min-h-6">
+            <div className="flex items-center justify-center min-h-6">
                 <Checkbox
                     classNames={{
                         base: cn(
@@ -52,7 +54,7 @@ export default function DreamstoneCounter(data: DreamstoneCounterData) {
                         "items-center justify-start",
                         "cursor-pointer w-full rounded-lg p-0 mr-0"
                         ),
-                        label: "text-inherit text-center w-24 grow",
+                        label: "text-inherit text-center w-24 sm:w-28 sm:text-lg",
                     }}
                     size="md"
                     radius="sm"

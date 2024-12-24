@@ -40,12 +40,12 @@ export default function PenList(data: PenListData) {
     const getPenDinoElements = (pen: Pen) => {
         return pen.dinos.map((dino) => (
             <div key={dino.id}
-                className="flex flex-col items-center w-full place-content-between bg-amber-300 border-3 rounded border-amber-400 p-1">
+                className="flex flex-col items-center w-full place-content-between bg-amber-300 border-3 rounded border-amber-400 p-1 sm:p-2 sm:gap-1">
                 <div className="flex flex-row self-end h-0">
                     <button className="h-5 w-5" onClick={() => data.onRemoveDinoClicked(pen.id, dino)}>X</button>
                 </div>
                 <div className="flex flex-row h-0 w-full place-content-between">
-                    <div className="grid w-9 h-9 rounded-full bg-white">
+                    <div className="grid w-9 h-9 rounded-full bg-white sm:h-10 sm:w-10">
                         <Image
                             src="/images/Dreamstone.png"
                             width={dino.species.size == Size.Small ? 24 : 32}
@@ -55,7 +55,7 @@ export default function PenList(data: PenListData) {
                         />
                     </div>
                 </div>
-                <div className="flex place-content-center h-16 w-16 shrink-0">
+                <div className="flex place-content-center h-16 w-16 shrink-0 sm:h-20 sm:w-20">
                     <Image
                         src={dino.species.image}
                         width={64}
@@ -64,26 +64,26 @@ export default function PenList(data: PenListData) {
                         className="w-auto h-auto max-h-full m-auto"
                     />
                 </div>
-                <div className="flex flex-row my-1">
+                <div className="flex flex-row my-1 sm:my-2 sm:text-xl">
                     <input value={dino.name}
                         onChange={(event) => { onDinoNameChange(pen.id, dino.id, event.target.value) }}
                         className="text-center w-full bg-amber-300">
                     </input>
                 </div>
-                <div className="flex flex-row w-full place-content-center gap-2">
+                <div className="flex flex-row w-full place-content-center gap-2 md:gap-1">
                     <Image
                         src={`/images/biomes/${dino.species.biome}.png`}
                         width={36}
                         height={36}
                         alt={`${dino.species.biome} Icon`}
-                        className="place-self-center rounded-full border-2 border-[#35A983] h-9 w-9"
+                        className="place-self-center rounded-full border-2 border-[#35A983] h-9 w-9 sm:h-10 sm:w-10"
                     />
                     <Image
                         src={`/images/food/${dino.species.diet}.png`}
                         width={36}
                         height={36}
                         alt={`${dino.species.diet} Icon`}
-                        className={`place-self-center rounded-lg border-2 ${
+                        className={`place-self-center rounded-lg border-2 sm:w-10 ${
                             dino.species.diet === Diet.Carnivore ?
                             "border-[#CD303D]" :
                             dino.species.diet === Diet.Herbivore ?
@@ -96,21 +96,21 @@ export default function PenList(data: PenListData) {
                         width={36}
                         height={36}
                         alt={`${dino.species.social} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#703D1C]"
+                        className="place-self-center rounded-lg border-2 border-[#703D1C] sm:w-10"
                     />
                     <Image
                         src={`/images/farm-skills/${dino.species.farmSkill}.png`}
                         width={36}
                         height={36}
                         alt={`${dino.species.farmSkill} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#34A983]"
+                        className="place-self-center rounded-lg border-2 border-[#34A983] sm:w-10"
                     />
                     <Image
                         src={`/images/wild-skills/${dino.species.wildSkill}.png`}
                         width={36}
                         height={36}
                         alt={`${dino.species.wildSkill} Icon`}
-                        className="place-self-center rounded-lg border-2 border-[#34A983]"
+                        className="place-self-center rounded-lg border-2 border-[#34A983] sm:w-10"
                     />
                 </div>
                 <div className="flex flex-col font-bold text-red-700">
@@ -129,22 +129,22 @@ export default function PenList(data: PenListData) {
 
     const penElements = data.pens.map(pen => (
         <div key={pen.id}
-            className="flex flex-col w-full bg-amber-200 border-3 rounded border-amber-400 p-2"
+            className="flex flex-col w-full bg-amber-200 border-3 rounded border-amber-400 gap-1 p-2 sm:gap-2 sm:p-3"
             onClick={() => data.onPenClicked(pen.id)}>
             <div className="flex flex-row w-full">
-                <div className="flex flex-row flex-wrap grow gap-2 text-small">
+                <div className="flex flex-row flex-wrap grow gap-2 text-small sm:text-base">
                     <div className="flex flex-row items-center gap-2">
                         <Image
                             src={`/images/biomes/${pen.biome}.png`}
                             width={36}
                             height={36}
                             alt={`${pen.biome} Icon`}
-                            className="place-self-center rounded-full border-2 border-[#35A983]"
+                            className="place-self-center rounded-full border-2 border-[#35A983] sm:w-11 sm:h-11"
                         />
                         <select key="pen-biome-select"
                             onChange={(event) => onPenBiomeSelected(event.target.value, pen.id)}
                             value={pen.biome}
-                            className="h-6 rounded bg-amber-100 border-2 border-amber-400">
+                            className="h-6 rounded bg-amber-100 border-2 border-amber-400 sm:h-8 md:h-9 md:text-xl">
                             <option value={Biome.Farm}>{Biome.Farm}</option>
                             <option value={Biome.Valley}>{Biome.Valley}</option>
                             <option value={Biome.Forest}>{Biome.Forest}</option>
@@ -157,7 +157,7 @@ export default function PenList(data: PenListData) {
                             width={36}
                             height={36}
                             alt={`${pen.foodType} Icon`}
-                            className={`place-self-center h-full rounded-full border-2 ${
+                            className={`place-self-center h-full rounded-full border-2 sm:w-11 sm:h-11 ${
                                 pen.foodType === FoodType.Meat ?
                                 "border-[#CD303D]" :
                                 "border-[#83BA4F]"}`}
@@ -165,7 +165,7 @@ export default function PenList(data: PenListData) {
                         <select key="pen-food-select"
                             onChange={(event) => onPenFoodSelected(event.target.value, pen.id)}
                             value={pen.foodType}
-                            className="h-6 rounded bg-amber-100 border-2 border-amber-400">
+                            className="h-6 rounded bg-amber-100 border-2 border-amber-400 sm:h-8 md:h-9 md:text-xl">
                             <option value={FoodType.Plant}>{FoodType.Plant}</option>
                             <option value={FoodType.Meat}>{FoodType.Meat}</option>
                         </select>
@@ -173,20 +173,20 @@ export default function PenList(data: PenListData) {
                 </div>
                 <button className="justify-self-end h-4" onClick={() => {data.onRemovePenClicked(pen)}}>X</button>
             </div>
-            <div className="flex flex-row flex-wrap text-small gap-x-2">
+            <div className="flex flex-row flex-wrap text-small gap-x-2 sm:text-base md:text-lg">
                 <div>• Food per day: {pen.foodPerDay}</div>
                 <div>• Min size: {pen.minSize} m²</div>
                 <div>• +Happiness: {Math.ceil(pen.minSize * 1.5)}m²</div>
                 <div>• ++Happiness: {pen.minSize * 2}m²</div>
             </div>
-            <div className="flex flex-row grow flex-wrap gap-2">
+            <div className="flex flex-row flex-wrap gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 2xl:grid-cols-3">
                 {getPenDinoElements(pen)}
             </div>
         </div>
     ))
 
     return (
-        <div id="pens-list-container" className="flex flex-col min-h-0 grow bg-amber-100 rounded p-2 gap-2 overflow-scroll">
+        <div id="pens-list-container" className="flex flex-col min-h-0 grow bg-amber-100 rounded p-2 gap-2 overflow-y-auto sm:p-4 lg:grid lg:grid-cols-2">
             {penElements}
         </div>
     )

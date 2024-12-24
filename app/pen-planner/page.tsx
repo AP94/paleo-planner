@@ -253,6 +253,26 @@ export default function PenPlanner() {
         setSmallDreamstoneCount(count => count + 1);
     }
 
+    const saveConfig = () => {
+        const file = new Blob(['Hello, world!'], { type: 'text/plain;charset=utf-8' });
+        saveAs(file, 'paleo-pen-planner.txt');
+    }
+
+    const loadConfig = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        const reader = new FileReader()
+        reader.onload = async (e) => { 
+            const text = (e.target?.result)
+            console.log(text)
+            alert(text)
+        };
+        let files = e.target?.files;
+        if (files) {
+            let file = files[0];
+            reader.readAsText(file);
+        }
+    }
+
     useEffect(() => {
         if (selectedDino) {
             for (let i = 0; i < dinos.length; i++) {
@@ -266,10 +286,23 @@ export default function PenPlanner() {
     }, [dinos, selectedDino]);
 
     return (
-    <div className="h-screen p-4 items-center justify-items-center">
-        <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-2 items-center flex-none overflow-hidden">
-            <h1 className="text-xl font-bold">Pen Planner</h1>
-            <div className={`flex flex-col w-full gap-2 min-h-0 grow ${showDinoSelection && "hidden"}`}>
+    <div className="h-screen p-4 items-center justify-items-center sm:p-6">
+        <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-2 items-center flex-none overflow-hidden sm:p-4 sm:text-lg">
+            <div className="flex px-2 h-0 justify-between w-full font-bold">
+                <button className="" onClick={() => saveConfig()}>
+                    Save
+                </button>
+                <label htmlFor="file-upload"
+                    className="">
+                    Load
+                </label>
+                <input id="file-upload"
+                    className="hidden"
+                    type="file"
+                    onChange={(event) => loadConfig(event)}/>
+            </div>
+            <h1 className="text-xl font-bold sm:text-2xl">Pen Planner</h1>
+            <div className={`flex flex-col w-full gap-2 min-h-0 grow ${showDinoSelection && "hidden"} sm:gap-4`}>
                 <div className="flex flex-col flex-none">
                     <DinoList 
                         dinos={dinos}

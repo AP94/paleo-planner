@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 import { Biome, Dino, Diet, DinoSpecies, FarmSkill, Flavor, Size, Social, WildSkill, Pen, FoodType } from "@/resources/types";
 import DinoList from "./components/dino-list"
 import PenList from "./components/pen-list";
@@ -261,7 +261,7 @@ export default function PenPlanner() {
     }
 
     const loadConfig = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        // e.preventDefault()
+        e.preventDefault()
         // const reader = new FileReader()
         // reader.onload = async (e) => { 
         //     const text = (e.target?.result)

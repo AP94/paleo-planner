@@ -226,13 +226,13 @@ export default function PenPlanner() {
             return [...dinos, dino];
         });
         setPens((prevPens) => {
-            let nextPens = [];
+            const nextPens = [];
             for (let i = 0; i < prevPens.length; i++) {
                 if (prevPens[i].id !== penID) {
                     nextPens.push(prevPens[i]);
                 }
                 else {
-                    let updatedPen = {...prevPens[i]}
+                    const updatedPen = {...prevPens[i]}
                     updatedPen.dinos = updatedPen.dinos.filter((penDino) => penDino.id !== dino.id);
                     if (updatedPen.dinos.length > 0) {
                         nextPens.push(updatedPen);
@@ -254,23 +254,26 @@ export default function PenPlanner() {
     }
 
     const saveConfig = () => {
-        const file = new Blob(['Hello, world!'], { type: 'text/plain;charset=utf-8' });
-        saveAs(file, 'paleo-pen-planner.txt');
+        // const file = new Blob(['Hello, world!'], { type: 'text/plain;charset=utf-8' });
+        // saveAs(file, 'paleo-pen-planner.txt');
+        
+        alert("Not yet implemented");
     }
 
     const loadConfig = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        const reader = new FileReader()
-        reader.onload = async (e) => { 
-            const text = (e.target?.result)
-            console.log(text)
-            alert(text)
-        };
-        let files = e.target?.files;
-        if (files) {
-            let file = files[0];
-            reader.readAsText(file);
-        }
+        // e.preventDefault()
+        // const reader = new FileReader()
+        // reader.onload = async (e) => { 
+        //     const text = (e.target?.result)
+        //     console.log(text)
+        //     alert(text)
+        // };
+        // let files = e.target?.files;
+        // if (files) {
+        //     let file = files[0];
+        //     reader.readAsText(file);
+        // }
+        alert("Not yet implemented");
     }
 
     useEffect(() => {

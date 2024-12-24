@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { DinoListData } from "@/resources/component-types";
-import { Biome, Diet, FoodType, Pen, Size, Social } from "@/resources/types";
+import { Diet, Size } from "@/resources/types";
 
 export default function dinoList(data: DinoListData) {
     

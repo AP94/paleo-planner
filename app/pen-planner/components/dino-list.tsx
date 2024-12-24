@@ -91,7 +91,7 @@ export default function dinoList(data: DinoListData) {
     ));
 
     return (
-        <div id="dinos-list-container" className="flex flex-col bg-amber-100 h-full w-full rounded gap-1 p-2 flex-none sm:p-4 sm:gap-3">
+        <div id="dinos-list-container" className="flex flex-col bg-amber-100 h-full w-full rounded p-2 flex-none sm:p-4">
             <div id="dinos-list" className="flex flex-row min-w-0 grow gap-1 overflow-x-auto sm:gap-2">
                 {dinoListElements}
             </div>

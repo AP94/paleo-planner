@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
-// import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver';
 import { Biome, Dino, Diet, DinoSpecies, FarmSkill, Flavor, Size, Social, WildSkill, Pen, FoodType } from "@/resources/types";
 import DinoList from "./components/dino-list"
 import PenList from "./components/pen-list";
@@ -27,13 +27,16 @@ const lucky: Dino = {
     species: LuckySpecies
 }
 
+const largeDreamstoneLimit = 28;
+const smallDreamstoneLimit = 19;
+
 export default function PenPlanner() {
     const [showDinoSelection, setShowDinoSelection] = useState(false);
     const [dinos, setDinos] = useState<Dino[]>([lucky]);
     const [selectedDino, setSelectedDino] = useState<Dino|null>(null);
     const [pens, setPens] = useState<Pen[]>([]);
-    const [largeDreamstoneCount, setLargeDreamstoneCount] = useState(27);
-    const [smallDreamstoneCount, setSmallDreamstoneCount] = useState(19);
+    const [largeDreamstoneCount, setLargeDreamstoneCount] = useState(largeDreamstoneLimit - 1);
+    const [smallDreamstoneCount, setSmallDreamstoneCount] = useState(smallDreamstoneLimit);
     
     const toggleShowDinoSelection = () => {
         setShowDinoSelection(show => !show);
@@ -254,26 +257,57 @@ export default function PenPlanner() {
     }
 
     const saveConfig = () => {
-        // const file = new Blob(['Hello, world!'], { type: 'text/plain;charset=utf-8' });
-        // saveAs(file, 'paleo-pen-planner.txt');
-        
-        alert("Not yet implemented");
+        const config = JSON.stringify({
+            dinos: dinos,
+            pens: pens
+        });
+        const file = new Blob([config], { type: 'text/plain;charset=utf-8' });
+        saveAs(file, 'Paleo Planner Pen Save.txt');
     }
 
     const loadConfig = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        // const reader = new FileReader()
-        // reader.onload = async (e) => { 
-        //     const text = (e.target?.result)
-        //     console.log(text)
-        //     alert(text)
-        // };
-        // let files = e.target?.files;
-        // if (files) {
-        //     let file = files[0];
-        //     reader.readAsText(file);
-        // }
-        alert("Not yet implemented");
+
+        const reader = new FileReader()
+        reader.onload = async (e) => { 
+            try {
+                const config = (e.target?.result) as string;
+                const configObj: {dinos: Dino[], pens: Pen[]} = JSON.parse(config);
+                console.log(configObj);
+                setDinos(configObj.dinos);
+                setPens(configObj.pens);
+                setSelectedDino(null);
+
+                let dinoCount = configObj.dinos.length;
+                let smallDSCount = 0;
+                for (let i = 0; i < configObj.dinos.length; i++) {
+                    if (configObj.dinos[i].species.size === Size.Small) {
+                        smallDSCount = smallDSCount + 1;
+                    }
+                }
+                for (let i = 0; i < configObj.pens.length; i++) {
+                    let pen = configObj.pens[i];
+                    dinoCount = dinoCount + pen.dinos.length;
+                    for (let j = 0; j < pen.dinos.length; j++) {
+                        if(pen.dinos[j].species.size === Size.Small) {
+                            smallDSCount = smallDSCount + 1;
+                        }
+                    }
+                }
+                const largeDSCount = dinoCount - smallDSCount;
+                setSmallDreamstoneCount(smallDreamstoneLimit - smallDSCount);
+                setLargeDreamstoneCount(largeDreamstoneLimit - largeDSCount);
+
+            } catch {
+                alert("Failed to load save file");
+            }
+
+        };
+        let files = e.target?.files;
+        if (files) {
+            let file = files[0];
+            reader.readAsText(file);
+        }
     }
 
     useEffect(() => {
@@ -292,11 +326,11 @@ export default function PenPlanner() {
     <div className="h-screen p-4 items-center justify-items-center sm:p-6">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-2 items-center flex-none overflow-hidden sm:p-4 sm:text-lg">
             <div className="flex px-2 h-0 justify-between w-full font-bold">
-                <button className="" onClick={() => saveConfig()}>
+                <button className={`${showDinoSelection ? "hidden" : ""}`} onClick={() => saveConfig()}>
                     Save
                 </button>
                 <label htmlFor="file-upload"
-                    className="">
+                    className={`${showDinoSelection ? "hidden" : ""}`}>
                     Load
                 </label>
                 <input id="file-upload"

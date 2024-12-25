@@ -286,7 +286,7 @@ export default function PenPlanner() {
                     }
                 }
                 for (let i = 0; i < configObj.pens.length; i++) {
-                    let pen = configObj.pens[i];
+                    const pen = configObj.pens[i];
                     dinoCount = dinoCount + pen.dinos.length;
                     for (let j = 0; j < pen.dinos.length; j++) {
                         if(pen.dinos[j].species.size === Size.Small) {
@@ -303,9 +303,9 @@ export default function PenPlanner() {
             }
 
         };
-        let files = e.target?.files;
+        const files = e.target?.files;
         if (files) {
-            let file = files[0];
+            const file = files[0];
             reader.readAsText(file);
         }
     }

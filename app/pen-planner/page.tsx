@@ -238,6 +238,7 @@ export default function PenPlanner() {
                     const updatedPen = {...prevPens[i]}
                     updatedPen.dinos = updatedPen.dinos.filter((penDino) => penDino.id !== dino.id);
                     if (updatedPen.dinos.length > 0) {
+                        updatedPen.foodPerDay = calculateFoodPerDay(updatedPen.dinos);
                         nextPens.push(updatedPen);
                     }
                 }

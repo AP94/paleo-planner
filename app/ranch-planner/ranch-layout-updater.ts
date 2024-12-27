@@ -102,7 +102,11 @@ export const getTile = (layout: Tile[][], row: number, col: number): Tile => {
     return layout[row][col];
 }
 
-const canChangeTileType = (layout: Tile[][], row: number, col: number): boolean => {
+const canChangeTileType = (layout: Tile[][], row: number, col: number, type: TileType): boolean => {
+    if (type === TileType.Unplaceable) {
+        return true;
+    }
+    
     if (layout[row][col].type === TileType.Background ||
         layout[row][col].type === TileType.Border) {
             return false;
@@ -125,7 +129,7 @@ export const setTileType = (layout: Tile[][], pos: Position, type: TileType): Ti
     const row = pos.y;
     const col = pos.x;
 
-    if (canChangeTileType(layout, row, col)) {
+    if (canChangeTileType(layout, row, col, type)) {
         newLayout[row][col].type = type;
     }
 
@@ -153,7 +157,7 @@ export const setTileTypeRange = (layout: Tile[][], pos1: Position, pos2: Positio
     
     for (let row = top; row <= bottom; row++) {
         for (let col = left; col <= right; col++) {
-            if (canChangeTileType(layout, row, col)) {
+            if (canChangeTileType(layout, row, col, type)) {
                 newLayout[row][col].type = type;
             }
         }
@@ -172,12 +176,20 @@ export const setTileObjectRange = (layout: Tile[][], pos1: Position, pos2: Posit
     // For fences, place them around the border of the area rather than filling it in
     if (obj === TileObject.Fence) {
         for (let col = left; col <= right; col++) {
-            newLayout[top][col].object = obj;
-            newLayout[bottom][col].object = obj;
+            if (canChangeTileObject(layout, top, col)) {
+                newLayout[top][col].object = obj;
+            }
+            if (canChangeTileObject(layout, bottom, col)) {
+                newLayout[bottom][col].object = obj;
+            }
         }
         for (let row = top; row <= bottom; row++) {
-            newLayout[row][left].object = obj;
-            newLayout[row][right].object = obj;
+            if (canChangeTileObject(layout, row, left)) {
+                newLayout[row][left].object = obj;
+            }
+            if (canChangeTileObject(layout, row, right)) {
+                newLayout[row][right].object = obj;
+            }
         }
     }
     

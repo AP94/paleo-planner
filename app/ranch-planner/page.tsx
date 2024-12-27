@@ -215,7 +215,6 @@ export default function RanchPlanner() {
     )}
 
     const generateToolbarSettingButton = (setting: ToolbarSetting) => {
-        console.log(toolbarSetting === setting);
         const buttonStyle = {
             borderColor: toolbarSetting === setting ? "rgb(251 191 36 / var(--tw-bg-opacity, 1))" : "transparent"
         }

@@ -274,7 +274,6 @@ export default function PenPlanner() {
             try {
                 const config = (e.target?.result) as string;
                 const configObj: {dinos: Dino[], pens: Pen[]} = JSON.parse(config);
-                console.log(configObj);
                 setDinos(configObj.dinos);
                 setPens(configObj.pens);
                 setSelectedDino(null);
@@ -331,7 +330,7 @@ export default function PenPlanner() {
                     Save
                 </button>
                 <label htmlFor="file-upload"
-                    className={`${showDinoSelection ? "hidden" : ""}`}>
+                    className={`cursor-pointer ${showDinoSelection ? "hidden" : ""}`}>
                     Load
                 </label>
                 <input id="file-upload"

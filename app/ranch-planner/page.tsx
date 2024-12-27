@@ -3,8 +3,9 @@
 import { FixedSizeGrid as Grid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import React, { useState } from "react";
+import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, setTileObjectRange, TileObject, TileType, Position, isInRange, setTileType, setTileTypeRange, getTileColor, getObjectColor } from './ranch-layout-updater';
+import { setTileObject, setTileObjectRange, TileObject, TileType, Position, isInRange, setTileType, setTileTypeRange, getTileColor, getObjectColor, Tile } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 
 enum ToolbarSetting {
@@ -25,10 +26,47 @@ export default function RanchPlanner() {
     const zoomLevels = [8, 12, 16, 20, 24];
     const [zoomLevel, setZoomLevel] = useState(2);
     const [toolbarSetting, setToolbarSetting] = useState<ToolbarSetting>(ToolbarSetting.None);
-    const [layout, setLayout] = useState(generateLayout());
+    const [layout, setLayout] = useState<Tile[][]>(generateLayout());
     const [currentMouseLocation, setCurrentMouseLocation] = useState<Position|null>(null)
     const [initialClickLocation, setInitialClickLocation] = useState<Position|null>(null);
 
+    const reset = () => {
+        setZoomLevel(2);
+        setToolbarSetting(ToolbarSetting.None);
+        setInitialClickLocation(null);
+        setCurrentMouseLocation(null);
+    }
+
+    const saveConfig = () => {
+        const config = JSON.stringify({
+            layout: layout
+        });
+        const file = new Blob([config], { type: 'text/plain;charset=utf-8' });
+        saveAs(file, 'Paleo Planner Ranch Save.txt');
+    }
+    
+    const loadConfig = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+
+        const reader = new FileReader()
+        reader.onload = async (e) => { 
+            try {
+                const config = (e.target?.result) as string;
+                const configObj: {layout: Tile[][]} = JSON.parse(config);
+                setLayout(configObj.layout);
+                reset();
+            } catch {
+                alert("Failed to load save file");
+            }
+
+        };
+        const files = e.target?.files;
+        if (files) {
+            const file = files[0];
+            reader.readAsText(file);
+        }
+    }
+    
     const increaseZoomLevel = () => {
         if (zoomLevel < 4) {
             setZoomLevel((prevLevel) => prevLevel + 1);
@@ -191,11 +229,29 @@ export default function RanchPlanner() {
             </div>
         )
     }
+    
+    const resetLayout = () => {
+        if (confirm("Are you sure you want to reset this ranch layout?")) {
+            setLayout(generateLayout());
+            reset();
+        }
+    }
 
     return (
       <div className="h-screen p-4 items-center justify-items-center">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-4 items-center flex-none overflow-hidden gap-3">
-          <h1 className="text-xl font-bold">Ranch Planner</h1>
+          <div className="flex px-2 h-0 justify-between w-full font-bold">
+                <button onClick={() => saveConfig()}>
+                    Save
+                </button>
+                <label htmlFor="file-upload" className="cursor-pointer">
+                    Load
+                </label>
+                <input id="file-upload"
+                    className="hidden"
+                    type="file"
+                    onChange={(event) => loadConfig(event)}/>
+            </div><h1 className="text-xl font-bold">Ranch Planner</h1>
           <div className="flex flex-col border-4 border-amber-400 w-full h-full rounded">
             <div className="flex flex-row w-full justify-evenly content-center bg-amber-200 border-b-3 border-amber-400 shrink-0">
                 <div className="flex flex-col place-content-center h-full">
@@ -220,6 +276,9 @@ export default function RanchPlanner() {
                 {generateToolbarSettingButton(ToolbarSetting.DirtPath)}
                 {generateToolbarSettingButton(ToolbarSetting.StonePath)}
                 {generateToolbarSettingButton(ToolbarSetting.CeramicPath)}
+                </div>
+                <div className="flex flex-col place-content-center h-full">
+                    <button className="h-6" onClick={resetLayout}>Reset</button>
                 </div>
             </div>
             <div className="flex grow bg-amber-100">

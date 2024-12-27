@@ -14,8 +14,7 @@ export default function Home() {
           </Link>
           <Link href="/ranch-planner">
             <button className="flex rounded-md bg-gradient-to-b from-signpost-top to-signpost-bottom border-8 border-signpost-back text-amber-900 w-96 h-56 text-3xl font-bold place-content-center place-items-center" disabled>
-              Ranch Planner<br/>
-              [Coming Soon]
+              Ranch Planner
             </button>
           </Link>
         </div>

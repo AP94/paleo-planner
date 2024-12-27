@@ -1,23 +1,7 @@
-import { Tile, TileType, getTile, setTileTypeRange, setTileType, setTileObject, TileObject } from "./ranch-layout-updater";
+import { Tile, TileType, getTile, setTileTypeRange, setTileType, setTileObject, TileObject, Direction, Line, Position } from "./ranch-layout-updater";
 
 const ranchWidth = 117;
 const ranchHeight = 73;
-
-export interface Position {
-    x: number;
-    y: number;
-}
-
-export enum Direction {
-    Horizontal,
-    Vertical
-}
-
-export interface Line {
-    origin: Position;
-    length: number;
-    direction: Direction;
-}
 
 export const border: Line[] = [
     {
@@ -382,7 +366,7 @@ export const generateLayout = (): Tile[][] => {
     for (let i = 0; i < ranchHeight; i++) {
         layout[i] = [];
         for (let j = 0; j < ranchWidth; j++) {
-            layout[i].push({ type: TileType.Background, object: null });
+            layout[i].push({ type: TileType.Background, object: TileObject.None });
         }
     }
 
@@ -443,22 +427,22 @@ export const generateLayout = (): Tile[][] => {
                 }
             } else {
                 if (farmTile) {
-                    layout[row][col].type = TileType.Farm;
+                    layout[row][col].type = TileType.Ranch;
                 }
             }
         }
     }
 
     // Set house/entrance tiles
-    layout = setTileTypeRange(layout, houseArea[0].x, houseArea[1].x, houseArea[0].y, houseArea[1].y, TileType.Border);
+    layout = setTileTypeRange(layout, houseArea[0], houseArea[1], TileType.Border);
 
     for (let i = 0; i < unplaceableLocations.length; i++) {
-        layout = setTileType(layout, unplaceableLocations[i].y, unplaceableLocations[i].x, TileType.Unplaceable);
+        layout = setTileType(layout, unplaceableLocations[i], TileType.Unplaceable);
     }
     
     // Set trees
     for (let i = 0; i < treeLocations.length; i++) {
-        layout = setTileObject(layout, treeLocations[i].y, treeLocations[i].x, TileObject.Tree);
+        layout = setTileObject(layout, treeLocations[i], TileObject.Tree);
     }
 
     return layout;

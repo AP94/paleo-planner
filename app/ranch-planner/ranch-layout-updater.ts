@@ -145,7 +145,7 @@ export const setTileObject = (layout: Tile[][], pos: Position, obj: TileObject):
 }
 
 export const setTileTypeRange = (layout: Tile[][], pos1: Position, pos2: Position, type: TileType): Tile[][] => {
-    let newLayout = {...layout};
+    const newLayout = {...layout};
     const left = Math.min(pos1.x, pos2.x);
     const right = Math.max(pos1.x, pos2.x);
     const top = Math.min(pos1.y, pos2.y);
@@ -163,7 +163,7 @@ export const setTileTypeRange = (layout: Tile[][], pos1: Position, pos2: Positio
 }
 
 export const setTileObjectRange = (layout: Tile[][], pos1: Position, pos2: Position, obj: TileObject): Tile[][] => {
-    let newLayout = {...layout};
+    const newLayout = {...layout};
     const left = Math.min(pos1.x, pos2.x);
     const right = Math.max(pos1.x, pos2.x);
     const top = Math.min(pos1.y, pos2.y);

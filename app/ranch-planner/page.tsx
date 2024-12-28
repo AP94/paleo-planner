@@ -126,7 +126,7 @@ export default function RanchPlanner() {
                     break;
                 case (TileObject.TenderPot):
                     objectElement = (
-                        <div className="w-3/5 h-3/5 rounded-full border-2 border-[#8C5C3E]"
+                        <div className="w-4/5 h-4/5 rounded-full border-2 border-[#8C5C3E]"
                             style={objectStyle}></div>
                     );
                     break;

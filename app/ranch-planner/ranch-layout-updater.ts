@@ -73,7 +73,7 @@ export const getTileColor = (type: TileType) => {
 export const getObjectColor = (object: TileObject) => {
     switch (object) {
         case (TileObject.Tree):
-            return "#1b5f50";
+            return "#103c32";
         case (TileObject.Fence):
         case (TileObject.Gate):
             return "#5b2b0e";

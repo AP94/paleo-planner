@@ -19,8 +19,7 @@ export enum TileObject {
     Gate = "Gate",
     FruitTree = "FruitTree",
     Bush = "Bush",
-    TenderPot = "TenderPot",
-    Object = "Object"
+    TenderPot = "TenderPot"
 }
 
 export interface Tile {
@@ -49,9 +48,9 @@ export const getTileColor = (type: TileType) => {
         case (TileType.Background):
             return "transparent";
         case (TileType.Border):
-            return "rgb(38 38 38 / var(--tw-bg-opacity, 1))";
+            return "#262626";
         case (TileType.Unplaceable):
-            return "rgb(163 163 163 / var(--tw-bg-opacity, 1))";
+            return "#a3a3a3";
         case (TileType.Farm):
             return "#7ebb60";
         case (TileType.Valley):
@@ -61,9 +60,9 @@ export const getTileColor = (type: TileType) => {
         case (TileType.Desert):
             return "#f1ca85";
         case (TileType.DirtPath):
-            return "rgb(139 100 79 / var(--tw-bg-opacity, 1))";
+            return "#8b644f";
         case (TileType.StonePath):
-            return "rgb(162 175 219 / var(--tw-bg-opacity, 1))";
+            return "#a2afdb";
         case (TileType.CeramicPath):
             return "#9c7f74";
         case (TileType.Crop):
@@ -79,13 +78,10 @@ export const getObjectColor = (object: TileObject) => {
         case (TileObject.Gate):
             return "#5b2b0e";
         case (TileObject.FruitTree):
-            return "";
         case (TileObject.Bush):
-            return "";
+            return "#378e65";
         case (TileObject.TenderPot):
-            return "";
-        case (TileObject.Object):
-            return "";
+            return "#dc9668";
     }
 }
 

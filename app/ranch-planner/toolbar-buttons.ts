@@ -21,7 +21,10 @@ export enum ToolbarSetting {
     DirtPath = "Dirt Path",
     StonePath = "Stone Path",
     CeramicPath = "Ceramic Path",
-    Crop = "Crop"
+    Crop = "Crop",
+    TenderPot = "Tender Pot",
+    Bush = "Bush",
+    FruitTree = "Fruit Tree",
 }
 
 export const toolbarButtonGroups: (ButtonGroup)[] = [
@@ -91,9 +94,24 @@ export const toolbarButtonGroups: (ButtonGroup)[] = [
                 setting: ToolbarSetting.Crop,
                 label: "Crop",
                 iconURL: "images/toolbar-icons/Crops.png"
+            },
+            {
+                setting: ToolbarSetting.TenderPot,
+                label: "Tender Pot",
+                iconURL: "images/toolbar-icons/Pot.png"
+            },
+            {
+                setting: ToolbarSetting.Bush,
+                label: "Bush",
+                iconURL: "images/toolbar-icons/Bush.png"
+            },
+            {
+                setting: ToolbarSetting.FruitTree,
+                label: "Fruit Tree",
+                iconURL: "images/toolbar-icons/FruitTree.png"
             }
         ],
-        label: "Crops"
+        label: "Farming"
     },
     {
         buttons: [

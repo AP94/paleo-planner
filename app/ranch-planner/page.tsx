@@ -122,7 +122,26 @@ export default function RanchPlanner() {
                     objectElement = (
                         <div className="w-3/4 h-3/4 rounded"
                             style={objectStyle}></div>
-                    )
+                    );
+                    break;
+                case (TileObject.TenderPot):
+                    objectElement = (
+                        <div className="w-3/5 h-3/5 rounded-full border-2 border-[#8C5C3E]"
+                            style={objectStyle}></div>
+                    );
+                    break;
+                case (TileObject.Bush):
+                    objectElement = (
+                        <div className="w-3/4 h-3/5 rounded border-2 border-[#1b5f50]"
+                            style={objectStyle}></div>
+                    );
+                    break;
+                case (TileObject.FruitTree):
+                    objectElement = (
+                        <div className="w-4/5 h-4/5 rounded-full border-2 border-[#1b5f50]"
+                            style={objectStyle}></div>
+                    );
+                    break;
             }
         }
 
@@ -137,8 +156,8 @@ export default function RanchPlanner() {
         }
         
         const onTileMouseUp = () => {
-            let object = null;
-            let tileType = null;
+            let object: TileObject|null = null;
+            let tileType: TileType|null = null;
 
             // If ToolbarSetting is Eraser, set object to null
             if (toolbarSetting !== ToolbarSetting.None) {
@@ -173,6 +192,15 @@ export default function RanchPlanner() {
                         break;
                     case (ToolbarSetting.Crop):
                         tileType = TileType.Crop;
+                        break;
+                    case (ToolbarSetting.TenderPot):
+                        object = TileObject.TenderPot;
+                        break;
+                    case (ToolbarSetting.Bush):
+                        object = TileObject.Bush;
+                        break;
+                    case (ToolbarSetting.FruitTree):
+                        object = TileObject.FruitTree;
                         break;
                 }
             }

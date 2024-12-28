@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, setTileObjectRange, TileObject, TileType, Position, isInRange, setTileType, setTileTypeRange, getTileColor, getObjectColor, Tile } from './ranch-layout-updater';
+import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, getObjectColor, Tile, clearFences, placeFences } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 
@@ -16,9 +16,8 @@ export default function RanchPlanner() {
     const [zoomLevel, setZoomLevel] = useState(2);
     const [toolbarSetting, setToolbarSetting] = useState<ToolbarSetting>(ToolbarSetting.None);
     const [layout, setLayout] = useState<Tile[][]>(generateLayout());
-    const [currentMouseLocation, setCurrentMouseLocation] = useState<Position|null>(null)
+    const [currentMouseLocation, setCurrentMouseLocation] = useState<Position|null>(null);
     const [initialClickLocation, setInitialClickLocation] = useState<Position|null>(null);
-
 
     const reset = () => {
         setZoomLevel(2);
@@ -154,74 +153,86 @@ export default function RanchPlanner() {
         const onTileMouseDown = () => {
             setInitialClickLocation(tilePos);
         }
-        
+
         const onTileMouseUp = () => {
-            let object: TileObject|null = null;
-            let tileType: TileType|null = null;
+            const setTile = (type: TileType) => {
+                if (initialClickLocation && currentMouseLocation) {
+                    setLayout(setTileType(layout, initialClickLocation, currentMouseLocation, type));
+                }
+            }
+
+            const setObject = (object: TileObject) => {
+                if (initialClickLocation && currentMouseLocation) {
+                    setLayout(setTileObject(layout, initialClickLocation, currentMouseLocation, object));
+                }
+            }
+
+            const setFences = () => {
+                if (initialClickLocation && currentMouseLocation) {
+                    setLayout(placeFences(layout, initialClickLocation, currentMouseLocation));
+                }
+            }
+
+            const removeFences = () => {
+                if (initialClickLocation && currentMouseLocation) {
+                    setLayout(clearFences(layout, initialClickLocation, currentMouseLocation));
+                }
+            }
 
             // If ToolbarSetting is Eraser, set object to null
             if (toolbarSetting !== ToolbarSetting.None) {
                 switch (toolbarSetting) {
-                    case (ToolbarSetting.Eraser):
-                        tileType = TileType.Farm;
-                        object = TileObject.None;
+                    case (ToolbarSetting.TileEraser):
+                        setTile(TileType.Farm);
+                        break;
+                    case (ToolbarSetting.FenceEraser):
+                        removeFences();
+                        break;
+                    case (ToolbarSetting.ObjectEraser):
+                        setObject(TileObject.None);
                         break;
                     case (ToolbarSetting.Fence):
-                        object = TileObject.Fence;
+                        setFences();
                         break;
                     case (ToolbarSetting.Gate):
-                        object = TileObject.Gate;
+                        setObject(TileObject.Gate);
                         break;
                     case (ToolbarSetting.Valley):
-                        tileType = TileType.Valley;
+                        setTile(TileType.Valley);
                         break;
                     case (ToolbarSetting.Forest):
-                        tileType = TileType.Forest;
+                        setTile(TileType.Forest);
                         break;
                     case (ToolbarSetting.Desert):
-                        tileType = TileType.Desert;
+                        setTile(TileType.Desert);
                         break;
                     case (ToolbarSetting.DirtPath):
-                        tileType = TileType.DirtPath;
+                        setTile(TileType.DirtPath);
                         break;
                     case (ToolbarSetting.StonePath):
-                        tileType = TileType.StonePath;
+                        setTile(TileType.StonePath);
                         break;
                     case (ToolbarSetting.CeramicPath):
-                        tileType = TileType.CeramicPath;
+                        setTile(TileType.CeramicPath);
                         break;
                     case (ToolbarSetting.Crop):
-                        tileType = TileType.Crop;
+                        setTile(TileType.Crop);
                         break;
                     case (ToolbarSetting.TenderPot):
-                        object = TileObject.TenderPot;
+                        setObject(TileObject.TenderPot);
                         break;
                     case (ToolbarSetting.Bush):
-                        object = TileObject.Bush;
+                        setObject(TileObject.Bush);
                         break;
                     case (ToolbarSetting.FruitTree):
-                        object = TileObject.FruitTree;
+                        setObject(TileObject.FruitTree);
+                        break;
+                    case (ToolbarSetting.Tree):
+                        setObject(TileObject.Tree);
                         break;
                 }
             }
 
-            if (!initialClickLocation ||
-                (data.columnIndex === initialClickLocation.x &&
-                data.rowIndex === initialClickLocation.y)) {
-                    if (object) {
-                        setLayout(setTileObject(layout, tilePos, object));
-                    }
-                    if (tileType) {
-                        setLayout(setTileType(layout, tilePos, tileType));
-                    }
-            } else if (currentMouseLocation) {
-                if (object) {
-                    setLayout(setTileObjectRange(layout, initialClickLocation, currentMouseLocation, object));
-                }
-                if (tileType) {
-                    setLayout(setTileTypeRange(layout, initialClickLocation, currentMouseLocation, tileType));
-                }
-            }
             setInitialClickLocation(null);
         }
 
@@ -268,7 +279,7 @@ export default function RanchPlanner() {
                             className="grid w-8 h-8 p-1 border-2 rounded-lg place-content-center"
                             style={buttonStyle}
                             onClick={() => onToolbarButtonClicked(button)}>
-                        <img src={button.iconURL} alt={button.label} />
+                        <img className="max-h-6" src={button.iconURL} alt={button.label} />
                     </button>
                 )
             }

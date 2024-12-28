@@ -1,4 +1,4 @@
-import { Tile, TileType, getTile, setTileTypeRange, setTileType, setTileObject, TileObject, Direction, Line, Position } from "./ranch-layout-updater";
+import { Tile, TileType, getTile, setTileType, setTileObject, TileObject, Direction, Line, Position } from "./ranch-layout-updater";
 
 const ranchWidth = 117;
 const ranchHeight = 73;
@@ -434,15 +434,15 @@ export const generateLayout = (): Tile[][] => {
     }
 
     // Set house/entrance tiles
-    layout = setTileTypeRange(layout, houseArea[0], houseArea[1], TileType.Border);
+    layout = setTileType(layout, houseArea[0], houseArea[1], TileType.Border);
 
     for (let i = 0; i < unplaceableLocations.length; i++) {
-        layout = setTileType(layout, unplaceableLocations[i], TileType.Unplaceable);
+        layout = setTileType(layout, unplaceableLocations[i], unplaceableLocations[i], TileType.Unplaceable);
     }
     
     // Set trees
     for (let i = 0; i < treeLocations.length; i++) {
-        layout = setTileObject(layout, treeLocations[i], TileObject.Tree);
+        layout = setTileObject(layout, treeLocations[i], treeLocations[i], TileObject.Tree);
     }
 
     return layout;

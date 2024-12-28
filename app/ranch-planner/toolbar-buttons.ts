@@ -11,7 +11,9 @@ export interface ToolbarButton {
 
 export enum ToolbarSetting {
     None = "None",
-    Eraser = "Eraser",
+    TileEraser = "Clear Tile",
+    ObjectEraser = "Remove Objects",
+    FenceEraser = "Clear Fencing",
     Fence = "Fence",
     Gate = "Gate",
     Farm = "Farm",
@@ -25,6 +27,7 @@ export enum ToolbarSetting {
     TenderPot = "Tender Pot",
     Bush = "Bush",
     FruitTree = "Fruit Tree",
+    Tree = "Tree"
 }
 
 export const toolbarButtonGroups: (ButtonGroup)[] = [
@@ -46,8 +49,8 @@ export const toolbarButtonGroups: (ButtonGroup)[] = [
     {
         buttons: [
             {
-            setting: ToolbarSetting.Eraser,
-            label: "Eraser",
+            setting: ToolbarSetting.ObjectEraser,
+            label: ToolbarSetting.ObjectEraser,
             iconURL: "svg-repo/eraser.svg"
             }
         ],
@@ -56,13 +59,18 @@ export const toolbarButtonGroups: (ButtonGroup)[] = [
     {
         buttons: [
             {
+                setting: ToolbarSetting.FenceEraser,
+                label: ToolbarSetting.FenceEraser,
+                iconURL: "svg-repo/cross.svg"
+            },
+            {
                 setting: ToolbarSetting.Fence,
-                label: "Fence",
+                label: ToolbarSetting.Fence,
                 iconURL: "images/toolbar-icons/Fence.png"
             },
             {
                 setting: ToolbarSetting.Gate,
-                label: "Gate",
+                label: ToolbarSetting.Gate,
                 iconURL: "images/toolbar-icons/Gate.png"
             }
         ],
@@ -71,18 +79,23 @@ export const toolbarButtonGroups: (ButtonGroup)[] = [
     {
         buttons: [
             {
+                setting: ToolbarSetting.TileEraser,
+                label: ToolbarSetting.TileEraser,
+                iconURL: "images/toolbar-icons/Farm-Icon.png"
+            },
+            {
                 setting: ToolbarSetting.Valley,
-                label: "Valley",
+                label: ToolbarSetting.Valley,
                 iconURL: "images/toolbar-icons/Valley-Icon.png"
             },
             {
                 setting: ToolbarSetting.Forest,
-                label: "Forest",
+                label: ToolbarSetting.Forest,
                 iconURL: "images/toolbar-icons/Forest-Icon.png"
             },
             {
                 setting: ToolbarSetting.Desert,
-                label: "Desert",
+                label: ToolbarSetting.Desert,
                 iconURL: "images/toolbar-icons/Desert-Icon.png"
             },
         ],
@@ -91,47 +104,52 @@ export const toolbarButtonGroups: (ButtonGroup)[] = [
     {
         buttons: [
             {
-                setting: ToolbarSetting.Crop,
-                label: "Crop",
-                iconURL: "images/toolbar-icons/Crops.png"
-            },
-            {
-                setting: ToolbarSetting.TenderPot,
-                label: "Tender Pot",
-                iconURL: "images/toolbar-icons/Pot.png"
-            },
-            {
-                setting: ToolbarSetting.Bush,
-                label: "Bush",
-                iconURL: "images/toolbar-icons/Bush.png"
-            },
-            {
-                setting: ToolbarSetting.FruitTree,
-                label: "Fruit Tree",
-                iconURL: "images/toolbar-icons/FruitTree.png"
-            }
-        ],
-        label: "Farming"
-    },
-    {
-        buttons: [
-            {
                 setting: ToolbarSetting.DirtPath,
-                label: "Dirt Path",
+                label: ToolbarSetting.DirtPath,
                 iconURL: "images/toolbar-icons/Dirt-Path.png"
             },
             {
                 setting: ToolbarSetting.StonePath,
-                label: "Stone Path",
+                label: ToolbarSetting.StonePath,
                 iconURL: "images/toolbar-icons/Stone-Path.png"
             },
             {
                 setting: ToolbarSetting.CeramicPath,
-                label: "Ceramic Path",
+                label: ToolbarSetting.CeramicPath,
                 iconURL: "images/toolbar-icons/Ceramic-Path.png"
             },
         ],
         label: "Paths"
+    },
+    {
+        buttons: [
+            {
+                setting: ToolbarSetting.Crop,
+                label: ToolbarSetting.Crop,
+                iconURL: "images/toolbar-icons/Crops.png"
+            },
+            {
+                setting: ToolbarSetting.TenderPot,
+                label: ToolbarSetting.TenderPot,
+                iconURL: "images/toolbar-icons/Pot.png"
+            },
+            {
+                setting: ToolbarSetting.Bush,
+                label: ToolbarSetting.Bush,
+                iconURL: "images/toolbar-icons/Bush.png"
+            },
+            {
+                setting: ToolbarSetting.FruitTree,
+                label: ToolbarSetting.FruitTree,
+                iconURL: "images/toolbar-icons/FruitTree.png"
+            },
+            {
+                setting: ToolbarSetting.Tree,
+                label: ToolbarSetting.Tree,
+                iconURL: "images/toolbar-icons/Tree.png"
+            }
+        ],
+        label: "Farming"
     },
     // Trees, fruit trees, bushes, tender pots, generic object
 ];

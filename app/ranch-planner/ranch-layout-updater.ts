@@ -2,14 +2,14 @@ export enum TileType {
     Background,
     Border,
     Unplaceable,
-    Ranch,
+    Farm,
     Valley,
     Forest,
     Desert,
+    Crop,
     DirtPath,
     StonePath,
     CeramicPath,
-    Crop,
 }
 
 export enum TileObject {
@@ -44,15 +44,6 @@ export interface Line {
     direction: Direction;
 }
 
-// Farm: #70a656
-// Valley: #3baf50
-// Forest: #198050
-// Desert: #f1ca85
-// Fence: #5b2b0e
-
-// #df9b5a
-// #1b5f50
-
 export const getTileColor = (type: TileType) => {
     switch (type) {
         case (TileType.Background):
@@ -61,7 +52,7 @@ export const getTileColor = (type: TileType) => {
             return "rgb(38 38 38 / var(--tw-bg-opacity, 1))";
         case (TileType.Unplaceable):
             return "rgb(163 163 163 / var(--tw-bg-opacity, 1))";
-        case (TileType.Ranch):
+        case (TileType.Farm):
             return "#7ebb60";
         case (TileType.Valley):
             return "#3baf50";

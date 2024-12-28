@@ -3,24 +3,13 @@
 import { FixedSizeGrid as Grid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import React, { useState } from "react";
+import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
 import { setTileObject, setTileObjectRange, TileObject, TileType, Position, isInRange, setTileType, setTileTypeRange, getTileColor, getObjectColor, Tile } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
+import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 
-enum ToolbarSetting {
-    None = "None",
-    Eraser = "Eraser",
-    Fence = "Fence",
-    Gate = "Gate",
-    Valley = "Valley",
-    Forest = "Forest",
-    Desert = "Desert",
-    DirtPath = "Dirt Path",
-    StonePath = "Stone Path",
-    CeramicPath = "Ceramic Path",
-    Crop = "Crop"
-}
 
 export default function RanchPlanner() {
     const zoomLevels = [8, 12, 16, 20, 24];
@@ -29,6 +18,7 @@ export default function RanchPlanner() {
     const [layout, setLayout] = useState<Tile[][]>(generateLayout());
     const [currentMouseLocation, setCurrentMouseLocation] = useState<Position|null>(null)
     const [initialClickLocation, setInitialClickLocation] = useState<Position|null>(null);
+
 
     const reset = () => {
         setZoomLevel(2);
@@ -66,6 +56,12 @@ export default function RanchPlanner() {
             reader.readAsText(file);
         }
     }
+
+    const decreaseZoomLevel = () => {
+        if (zoomLevel > 0) {
+            setZoomLevel((prevLevel) => prevLevel - 1);
+        }
+    }
     
     const increaseZoomLevel = () => {
         if (zoomLevel < 4) {
@@ -73,15 +69,17 @@ export default function RanchPlanner() {
         }
     }
 
-    const decreaseZoomLevel = () => {
-        if (zoomLevel > 0) {
-            setZoomLevel((prevLevel) => prevLevel - 1);
+    const onToolbarButtonClicked = (button: ToolbarButton) => {
+        if (button.label === "Zoom Out") {
+            decreaseZoomLevel();
         }
-    }
-
-    const onToolbarButtonClicked = (setting: ToolbarSetting) => {
-        const newSetting = setting !== toolbarSetting ? setting : ToolbarSetting.None;
-        setToolbarSetting(newSetting);
+        else if (button.label === "Zoom In") {
+            increaseZoomLevel();
+        }
+        else {
+            const newSetting = button.setting !== toolbarSetting ? button.setting : ToolbarSetting.None;
+            setToolbarSetting(newSetting);
+        }
     }
 
     const Cell = (data: CellData) => {
@@ -146,7 +144,7 @@ export default function RanchPlanner() {
             if (toolbarSetting !== ToolbarSetting.None) {
                 switch (toolbarSetting) {
                     case (ToolbarSetting.Eraser):
-                        tileType = TileType.Ranch;
+                        tileType = TileType.Farm;
                         object = TileObject.None;
                         break;
                     case (ToolbarSetting.Fence):
@@ -214,19 +212,51 @@ export default function RanchPlanner() {
         </div>
     )}
 
-    const generateToolbarSettingButton = (setting: ToolbarSetting) => {
-        const buttonStyle = {
-            borderColor: toolbarSetting === setting ? "rgb(251 191 36 / var(--tw-bg-opacity, 1))" : "transparent"
+    const generateButtonElements = () => {
+        const elements = [];
+
+        for (let i = 0; i < toolbarButtonGroups.length; i++) {
+            const buttonGroup = toolbarButtonGroups[i];
+            // Entry is a button group
+            const buttonGroupElements = [];
+
+            for (let j = 0; j < buttonGroup.buttons.length; j++) {
+                const button = buttonGroup.buttons[j];
+                let borderColor = "rgb(217 119 6 / var(--tw-bg-opacity, 1))";
+                let backgroundColor = "rgb(252 211 77 / var(--tw-bg-opacity, 1))";
+                
+                if (button.setting && button.setting !== ToolbarSetting.None && toolbarSetting === button.setting) {
+                    borderColor = "rgb(16 185 129 / var(--tw-bg-opacity, 1))";
+                    backgroundColor = "rgb(209 250 229 / var(--tw-bg-opacity, 1))";
+                }
+
+                const buttonStyle = {
+                    borderColor: borderColor,
+                    backgroundColor: backgroundColor
+                }
+
+                buttonGroupElements.push(
+                    <button key={nanoid()}
+                            className="grid w-8 h-8 p-1 border-2 rounded-lg place-content-center"
+                            style={buttonStyle}
+                            onClick={() => onToolbarButtonClicked(button)}>
+                        <img src={button.iconURL} alt={button.label} />
+                    </button>
+                )
+            }
+
+            elements.push(
+                <div key={nanoid()}
+                    className="flex flex-col place-content-center text-center">
+                    <div>{buttonGroup.label}</div>
+                    <div className="flex flex-row gap-2 place-content-center">
+                        {buttonGroupElements}
+                    </div>
+                </div>
+            )
         }
-        return (
-            <div className="flex flex-col place-content-center h-full">
-                <button className="h-6 border-2 rounded"
-                    onClick={() => onToolbarButtonClicked(setting)}
-                    style={buttonStyle}>
-                    {setting}
-                </button>
-            </div>
-        )
+
+        return elements;
     }
     
     const resetLayout = () => {
@@ -250,34 +280,12 @@ export default function RanchPlanner() {
                     className="hidden"
                     type="file"
                     onChange={(event) => loadConfig(event)}/>
-            </div><h1 className="text-xl font-bold">Ranch Planner</h1>
+            </div><h1 className="text-2xl font-bold">Ranch Planner</h1>
           <div className="flex flex-col border-4 border-amber-400 w-full h-full rounded">
-            <div className="flex flex-row w-full justify-evenly content-center bg-amber-200 border-b-3 border-amber-400 shrink-0">
-                <div className="flex flex-col place-content-center h-full">
-                    <div className="flex flex-row place-content-center">
-                    <button className="w-6 h-6" onClick={() => decreaseZoomLevel()}>-</button>
-                    Zoom
-                    <button className="w-6 h-6" onClick={() => increaseZoomLevel()}>+</button>
-                    </div>
-                </div>
-                {generateToolbarSettingButton(ToolbarSetting.Eraser)}
-                <div className="flex flex-col place-content-center h-full">
-                    {generateToolbarSettingButton(ToolbarSetting.Fence)}
-                    {generateToolbarSettingButton(ToolbarSetting.Gate)}
-                </div>
-                <div className="flex flex-col place-content-center h-full">
-                    {generateToolbarSettingButton(ToolbarSetting.Valley)}
-                    {generateToolbarSettingButton(ToolbarSetting.Forest)}
-                    {generateToolbarSettingButton(ToolbarSetting.Desert)}
-                </div>
-                {generateToolbarSettingButton(ToolbarSetting.Crop)}
-                <div className="flex flex-col place-content-center h-full">
-                {generateToolbarSettingButton(ToolbarSetting.DirtPath)}
-                {generateToolbarSettingButton(ToolbarSetting.StonePath)}
-                {generateToolbarSettingButton(ToolbarSetting.CeramicPath)}
-                </div>
-                <div className="flex flex-col place-content-center h-full">
-                    <button className="h-6" onClick={resetLayout}>Reset</button>
+            <div className="flex flex-row w-full justify-around content-center py-1 px-5 bg-amber-200 border-b-3 border-amber-400 shrink-0">
+                {generateButtonElements()}
+                <div className="flex flex-col place-content-center h-full font-bold">
+                    <button className="h-8 w-20" onClick={resetLayout}>Reset</button>
                 </div>
             </div>
             <div className="flex grow bg-amber-100">

@@ -38,6 +38,7 @@ export default function PenPlanner() {
     const [largeDreamstoneCount, setLargeDreamstoneCount] = useState(largeDreamstoneLimit - 1);
     const [smallDreamstoneCount, setSmallDreamstoneCount] = useState(smallDreamstoneLimit);
     
+
     const toggleShowDinoSelection = () => {
         setShowDinoSelection(show => !show);
     }
@@ -257,6 +258,56 @@ export default function PenPlanner() {
         setSmallDreamstoneCount(count => count + 1);
     }
 
+    const loadConfigString = (config: string) => {
+        try {
+            const configObj: {dinos: Dino[], pens: Pen[]} = JSON.parse(config);
+            setDinos(configObj.dinos);
+            setPens(configObj.pens);
+            setSelectedDino(null);
+
+            let dinoCount = configObj.dinos.length;
+            let smallDSCount = 0;
+            for (let i = 0; i < configObj.dinos.length; i++) {
+                if (configObj.dinos[i].species.size === Size.Small) {
+                    smallDSCount = smallDSCount + 1;
+                }
+            }
+            for (let i = 0; i < configObj.pens.length; i++) {
+                const pen = configObj.pens[i];
+                dinoCount = dinoCount + pen.dinos.length;
+                for (let j = 0; j < pen.dinos.length; j++) {
+                    if(pen.dinos[j].species.size === Size.Small) {
+                        smallDSCount = smallDSCount + 1;
+                    }
+                }
+            }
+            const largeDSCount = dinoCount - smallDSCount;
+            setSmallDreamstoneCount(smallDreamstoneLimit - smallDSCount);
+            setLargeDreamstoneCount(largeDreamstoneLimit - largeDSCount);
+
+        } catch {
+            console.error("Failed to load save");
+        }
+    }
+    
+    const getCookieValue = (name: string) =>  
+    {
+        const regex = new RegExp(`(^| )${name}=([^;]+)`)
+        const match = document.cookie.match(regex)
+        if (match) {
+        return match[2]
+        }
+        return null;
+    }
+
+    const updateCookies = () => {
+        const config = JSON.stringify({
+            dinos: dinos,
+            pens: pens
+        });
+        document.cookie = "paleo-pen-planner=" + config; 
+    }
+
     const saveConfig = () => {
         const config = JSON.stringify({
             dinos: dinos,
@@ -273,31 +324,7 @@ export default function PenPlanner() {
         reader.onload = async (e) => { 
             try {
                 const config = (e.target?.result) as string;
-                const configObj: {dinos: Dino[], pens: Pen[]} = JSON.parse(config);
-                setDinos(configObj.dinos);
-                setPens(configObj.pens);
-                setSelectedDino(null);
-
-                let dinoCount = configObj.dinos.length;
-                let smallDSCount = 0;
-                for (let i = 0; i < configObj.dinos.length; i++) {
-                    if (configObj.dinos[i].species.size === Size.Small) {
-                        smallDSCount = smallDSCount + 1;
-                    }
-                }
-                for (let i = 0; i < configObj.pens.length; i++) {
-                    const pen = configObj.pens[i];
-                    dinoCount = dinoCount + pen.dinos.length;
-                    for (let j = 0; j < pen.dinos.length; j++) {
-                        if(pen.dinos[j].species.size === Size.Small) {
-                            smallDSCount = smallDSCount + 1;
-                        }
-                    }
-                }
-                const largeDSCount = dinoCount - smallDSCount;
-                setSmallDreamstoneCount(smallDreamstoneLimit - smallDSCount);
-                setLargeDreamstoneCount(largeDreamstoneLimit - largeDSCount);
-
+                loadConfigString(config);
             } catch {
                 alert("Failed to load save file");
             }
@@ -309,6 +336,26 @@ export default function PenPlanner() {
             reader.readAsText(file);
         }
     }
+        
+    const resetConfig = () => {
+        if (confirm("Are you sure you want to reset?")) {
+            setDinos([lucky]);
+            setPens([]);
+            setSelectedDino(null);
+            setLargeDreamstoneCount(largeDreamstoneLimit - 1);
+            setSmallDreamstoneCount(smallDreamstoneLimit);
+        }
+    }
+
+    useEffect(() => {
+        const cachedSetup = getCookieValue("paleo-pen-planner");
+
+        console.log(cachedSetup);
+
+        if (cachedSetup) {
+            loadConfigString(cachedSetup);
+        }
+    }, []);
 
     useEffect(() => {
         if (selectedDino) {
@@ -322,23 +369,33 @@ export default function PenPlanner() {
         }
     }, [dinos, selectedDino]);
 
+    useEffect(() => {
+        updateCookies();
+    }, [dinos, pens]);
+
     return (
     <div className="h-screen p-4 items-center justify-items-center sm:p-6">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-2 items-center flex-none overflow-hidden sm:p-4 sm:text-lg">
-            <div className="flex px-2 h-0 justify-between w-full font-bold">
-                <button className={`${showDinoSelection ? "hidden" : ""}`} onClick={() => saveConfig()}>
-                    Save
+            <div className={`px-2 h-0 justify-between w-full font-bold ${showDinoSelection ? "hidden" : "flex"}`}>
+                <button className="text-red-700" onClick={() => resetConfig()}>
+                    Reset
                 </button>
-                <label htmlFor="file-upload"
-                    className={`cursor-pointer ${showDinoSelection ? "hidden" : ""}`}>
-                    Load
-                </label>
-                <input id="file-upload"
-                    className="hidden"
-                    type="file"
-                    onChange={(event) => loadConfig(event)}/>
+                <div className="flex gap-2">
+                    <button className="" onClick={() => saveConfig()}>
+                        Save
+                    </button>
+                    <label htmlFor="file-upload"
+                        className="cursor-pointer">
+                        Load
+                    </label>
+                    <input id="file-upload"
+                        className="hidden"
+                        type="file"
+                        onChange={(event) => loadConfig(event)}/>
+                </div>
             </div>
-            <h1 className="text-xl font-bold sm:text-2xl">Pen Planner</h1>
+            <h1 className="text-xl font-bold sm:text-2xl sm:pb-1">Pen Planner</h1>
+            
             <div className={`flex flex-col w-full gap-2 min-h-0 grow ${showDinoSelection && "hidden"} sm:gap-4`}>
                 <div className="flex flex-col flex-none">
                     <DinoList 
@@ -361,15 +418,13 @@ export default function PenPlanner() {
                     updatePenDinoName={updatePenDinoName}
                 />
             </div>
-            {
-                <DreamstoneCounter
-                    hidden={showDinoSelection}
-                    largeDSCount={largeDreamstoneCount}
-                    smallDSCount={smallDreamstoneCount}
-                    convertSmallDSToLarge={convertSmallDSToLarge}
-                    convertLargeDSToSmall={convertLargeDSToSmall}                
-                />
-            }
+            <DreamstoneCounter
+                hidden={showDinoSelection}
+                largeDSCount={largeDreamstoneCount}
+                smallDSCount={smallDreamstoneCount}
+                convertSmallDSToLarge={convertSmallDSToLarge}
+                convertLargeDSToSmall={convertLargeDSToSmall}                
+            />
             <SpeciesSelect
                 hidden={!showDinoSelection}
                 onSpeciesClicked={onSpeciesClicked}

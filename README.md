@@ -17,9 +17,13 @@ The exception is public/images/Dreamstone.png, which I drew by tracing a screens
 
 ### Licensing
 
-SVGs located in the public/svgrepo folder are from svgrepo.com and are distributed under the following licence:
+SVGs located in the public/svgrepo folder are from svgrepo.com and are distributed under the following licences:
 https://www.svgrepo.com/page/licensing/#CC%20Attribution
+https://www.svgrepo.com/page/licensing/#MIT
 
 Zoom icons:
 https://www.svgrepo.com/svg/522346/zoom-in
 https://www.svgrepo.com/svg/522350/zoom-out
+
+Cross (X):
+https://www.svgrepo.com/svg/522087/cross

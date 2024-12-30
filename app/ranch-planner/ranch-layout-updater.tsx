@@ -19,7 +19,14 @@ export enum TileObject {
     Gate = "Gate",
     FruitTree = "FruitTree",
     Bush = "Bush",
-    TenderPot = "TenderPot"
+    Water = "Water",
+    TenderPot = "TenderPot",
+    Dreamstone = "Dreamstone",
+    Chest = "Chest",
+    CookingPot = "Cooking Pot",
+    FeedingTrough = "Trough",
+    Composter = "Composter",
+    Decoration = "Decoration"
 }
 
 export interface Tile {
@@ -50,7 +57,7 @@ export const getTileColor = (type: TileType) => {
         case (TileType.Border):
             return "#262626";
         case (TileType.Unplaceable):
-            return "#a3a3a3";
+            return "#797878";
         case (TileType.Farm):
             return "#7ebb60";
         case (TileType.Valley):
@@ -80,9 +87,141 @@ export const getObjectColor = (object: TileObject) => {
         case (TileObject.FruitTree):
         case (TileObject.Bush):
             return "#378e65";
+        case (TileObject.FeedingTrough):
         case (TileObject.TenderPot):
             return "#dc9668";
+        case (TileObject.Water):
+            case (TileObject.CookingPot):
+            return "#5dadec";
+        case (TileObject.Dreamstone):
+            return "#ffb7c1";
+        case (TileObject.Chest):
+            return "#d0803c";
+        case (TileObject.Composter):
+            return "#8C5C3E";
+        case (TileObject.Decoration):
+            return "#fef0af";
     }
+}
+
+export const getBorderColor = (object: TileObject) => {
+    switch (object) {
+        case (TileObject.FeedingTrough):
+            case (TileObject.TenderPot):
+            return "#5b2b0e";
+        case (TileObject.FruitTree):
+            return "#1b5f50";
+        case (TileObject.Bush):
+            return "#1b5f50";
+        case (TileObject.Dreamstone):
+            return "#b36170";
+        case (TileObject.Chest):
+            return "#5b2b0e";
+        case (TileObject.CookingPot):
+            return "#2c323e";
+        case (TileObject.Composter):
+            return "#703624";
+        case (TileObject.Decoration):
+            return "#d0803c";
+        default:
+            return null;
+    }
+}
+
+export const getObjectElement = (object: TileObject) => {
+    let objectElement = null;
+    
+    if (object !== TileObject.None) {
+        const borderColor = getBorderColor(object);
+
+        const objectStyle = {
+            backgroundColor: getObjectColor(object),
+            border: borderColor ? `2px solid ${borderColor}` : "none"
+        }
+
+        switch (object) {
+            case (TileObject.Tree):
+                objectElement = (
+                    <div className="w-full h-full rounded-full"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Fence):
+                objectElement = (
+                    <div className="w-1/2 h-1/2 rounded-full"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Gate):
+                objectElement = (
+                    <div className="w-3/4 h-3/4 rounded"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.TenderPot):
+                objectElement = (
+                    <div className="w-4/5 h-4/5 rounded-full"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Water):
+                objectElement = (
+                    <div className="w-full h-full rounded-sm"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Bush):
+                objectElement = (
+                    <div className="w-3/4 h-3/5 rounded"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.FruitTree):
+                objectElement = (
+                    <div className="w-4/5 h-4/5 rounded-full"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Dreamstone):
+                objectElement = (
+                    <div className="w-4/5 h-4/5 rounded-full"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Chest):
+                objectElement = (
+                    <div className="w-full h-4/5 rounded"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.CookingPot):
+                objectElement = (
+                    <div className="w-4/5 h-4/5 rounded-full"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.FeedingTrough):
+                objectElement = (
+                    <div className="w-full h-4/5 rounded-sm"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Composter):
+                objectElement = (
+                    <div className="w-4/5 h-4/5 rounded-sm"
+                        style={objectStyle}></div>
+                );
+                break;
+            case (TileObject.Decoration):
+                objectElement = (
+                    <div className="w-full h-full rounded-md"
+                        style={objectStyle}></div>
+                );
+                break;
+        }
+    }
+
+    return objectElement;
 }
 
 export const getTile = (layout: Tile[][], row: number, col: number): Tile => {
@@ -95,7 +234,8 @@ const canChangeTileType = (layout: Tile[][], row: number, col: number, type: Til
     }
     
     if (layout[row][col].type === TileType.Background ||
-        layout[row][col].type === TileType.Border) {
+        layout[row][col].type === TileType.Border ||
+        layout[row][col].type === TileType.Unplaceable) {
             return false;
     }
     return true;
@@ -155,7 +295,8 @@ export const clearFences = (layout: Tile[][], pos1: Position, pos2: Position): T
 
     for (let col = left; col <= right; col++) {
         for (let row = top ; row <= bottom; row++) {
-            if (newLayout[row][col].object === TileObject.Fence) {
+            if (newLayout[row][col].object === TileObject.Fence ||
+                newLayout[row][col].object === TileObject.Gate) {
                 newLayout[row][col].object = TileObject.None;
             }
         }

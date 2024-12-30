@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, getObjectColor, Tile, clearFences, placeFences } from './ranch-layout-updater';
+import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, getObjectColor, Tile, clearFences, placeFences, getObjectElement } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 
@@ -20,7 +20,6 @@ export default function RanchPlanner() {
     const [initialClickLocation, setInitialClickLocation] = useState<Position|null>(null);
 
     const reset = () => {
-        setZoomLevel(2);
         setToolbarSetting(ToolbarSetting.None);
         setInitialClickLocation(null);
         setCurrentMouseLocation(null);
@@ -97,53 +96,6 @@ export default function RanchPlanner() {
             backgroundColor = getTileColor(tile.type);
         }
 
-        let objectElement = null;
-
-        if (tile.object !== TileObject.None) {
-            const objectStyle = {
-                backgroundColor: getObjectColor(tile.object)
-            }
-    
-            switch (tile.object) {
-                case (TileObject.Tree):
-                    objectElement = (
-                        <div className="w-full h-full rounded-full"
-                            style={objectStyle}></div>
-                    );
-                    break;
-                case (TileObject.Fence):
-                    objectElement = (
-                        <div className="w-1/2 h-1/2 rounded-full"
-                            style={objectStyle}></div>
-                    );
-                    break;
-                case (TileObject.Gate):
-                    objectElement = (
-                        <div className="w-3/4 h-3/4 rounded"
-                            style={objectStyle}></div>
-                    );
-                    break;
-                case (TileObject.TenderPot):
-                    objectElement = (
-                        <div className="w-4/5 h-4/5 rounded-full border-2 border-[#8C5C3E]"
-                            style={objectStyle}></div>
-                    );
-                    break;
-                case (TileObject.Bush):
-                    objectElement = (
-                        <div className="w-3/4 h-3/5 rounded border-2 border-[#1b5f50]"
-                            style={objectStyle}></div>
-                    );
-                    break;
-                case (TileObject.FruitTree):
-                    objectElement = (
-                        <div className="w-4/5 h-4/5 rounded-full border-2 border-[#1b5f50]"
-                            style={objectStyle}></div>
-                    );
-                    break;
-            }
-        }
-
         const dyanmicStyle = {
             ...data.style,
             borderColor: `${tile.type === TileType.Background || tile.type === TileType.Border ? "transparent" : "rgb(82 82 82 / var(--tw-bg-opacity, 1))"}`,
@@ -182,20 +134,20 @@ export default function RanchPlanner() {
             // If ToolbarSetting is Eraser, set object to null
             if (toolbarSetting !== ToolbarSetting.None) {
                 switch (toolbarSetting) {
-                    case (ToolbarSetting.TileEraser):
-                        setTile(TileType.Farm);
+                    case (ToolbarSetting.ObjectEraser):
+                        setObject(TileObject.None);
                         break;
                     case (ToolbarSetting.FenceEraser):
                         removeFences();
-                        break;
-                    case (ToolbarSetting.ObjectEraser):
-                        setObject(TileObject.None);
                         break;
                     case (ToolbarSetting.Fence):
                         setFences();
                         break;
                     case (ToolbarSetting.Gate):
                         setObject(TileObject.Gate);
+                        break;
+                    case (ToolbarSetting.Farm):
+                        setTile(TileType.Farm);
                         break;
                     case (ToolbarSetting.Valley):
                         setTile(TileType.Valley);
@@ -221,6 +173,9 @@ export default function RanchPlanner() {
                     case (ToolbarSetting.TenderPot):
                         setObject(TileObject.TenderPot);
                         break;
+                    case (ToolbarSetting.Water):
+                        setObject(TileObject.Water);
+                        break;
                     case (ToolbarSetting.Bush):
                         setObject(TileObject.Bush);
                         break;
@@ -229,6 +184,24 @@ export default function RanchPlanner() {
                         break;
                     case (ToolbarSetting.Tree):
                         setObject(TileObject.Tree);
+                        break;
+                    case (ToolbarSetting.Dreamstone):
+                        setObject(TileObject.Dreamstone);
+                        break;
+                    case (ToolbarSetting.Chest):
+                        setObject(TileObject.Chest);
+                        break;
+                    case (ToolbarSetting.CookingPot):
+                        setObject(TileObject.CookingPot);
+                        break;
+                    case (ToolbarSetting.FeedingTrough):
+                        setObject(TileObject.FeedingTrough);
+                        break;
+                    case (ToolbarSetting.Composter):
+                        setObject(TileObject.Composter);
+                        break;
+                    case (ToolbarSetting.Decoration):
+                        setObject(TileObject.Decoration);
                         break;
                 }
             }
@@ -247,7 +220,7 @@ export default function RanchPlanner() {
             onMouseDown={onTileMouseDown}
             onMouseUp={onTileMouseUp}
             onMouseEnter={onTileMouseEnter}>
-            {objectElement}
+            {getObjectElement(tile.object)}
         </div>
     )}
 
@@ -276,7 +249,7 @@ export default function RanchPlanner() {
 
                 buttonGroupElements.push(
                     <button key={nanoid()}
-                            className="grid w-8 h-8 p-1 border-2 rounded-lg place-content-center"
+                            className="grid w-10 h-10 p-1 border-2 rounded-lg place-content-center"
                             style={buttonStyle}
                             onClick={() => onToolbarButtonClicked(button)}>
                         <img className="max-h-6" src={button.iconURL} alt={button.label} />
@@ -286,9 +259,9 @@ export default function RanchPlanner() {
 
             elements.push(
                 <div key={nanoid()}
-                    className="flex flex-col place-content-center text-center">
+                    className="flex flex-col place-content-center text-center m-auto">
                     <div>{buttonGroup.label}</div>
-                    <div className="flex flex-row gap-2 place-content-center">
+                    <div className="flex flex-row gap-2 place-content-center px-2">
                         {buttonGroupElements}
                     </div>
                 </div>
@@ -321,7 +294,7 @@ export default function RanchPlanner() {
                     onChange={(event) => loadConfig(event)}/>
             </div><h1 className="text-2xl font-bold">Ranch Planner</h1>
           <div className="flex flex-col border-4 border-amber-400 w-full h-full rounded">
-            <div className="flex flex-row w-full justify-around content-center py-1 px-5 bg-amber-200 border-b-3 border-amber-400 shrink-0">
+            <div className="flex flex-row flex-nowrap w-full overflow-x-auto content-center py-1 px-5 gap-2 bg-amber-200 border-b-3 border-amber-400 shrink-0">
                 {generateButtonElements()}
                 <div className="flex flex-col place-content-center h-full font-bold">
                     <button className="h-8 w-20" onClick={resetLayout}>Reset</button>

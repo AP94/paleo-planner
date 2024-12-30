@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, getObjectColor, Tile, clearFences, placeFences, getObjectElement } from './ranch-layout-updater';
+import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 

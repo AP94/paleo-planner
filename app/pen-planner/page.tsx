@@ -240,6 +240,7 @@ export default function PenPlanner() {
                     updatedPen.dinos = updatedPen.dinos.filter((penDino) => penDino.id !== dino.id);
                     if (updatedPen.dinos.length > 0) {
                         updatedPen.foodPerDay = calculateFoodPerDay(updatedPen.dinos);
+                        updatedPen.minSize = calculateMinSize(updatedPen.dinos);
                         nextPens.push(updatedPen);
                     }
                 }

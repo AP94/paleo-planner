@@ -353,38 +353,38 @@ export const isInRange = (startPos: Position, endPos: Position, pos: Position): 
 }
 
 export const createRanchImage = (layout: Tile[][]) => {
-    // const padding = 25;
-    // const tileSize = 10;
-    // const tileBorderWidth = 1;
+    const padding = 25;
+    const tileSize = 10;
+    const tileBorderWidth = 1;
 
-    // const width = padding * 2 + layout[0].length * tileSize + (layout[0].length - 1) * tileBorderWidth * 2
-    // const height = padding * 2 + layout.length * tileSize + (layout.length - 1) * tileBorderWidth * 2
+    const width = padding * 2 + layout[0].length * tileSize + (layout[0].length - 1) * tileBorderWidth * 2
+    const height = padding * 2 + layout.length * tileSize + (layout.length - 1) * tileBorderWidth * 2
 
-    // const canvas: HTMLCanvasElement = document.createElement('canvas');
-    // canvas.width = width;
-    // canvas.height = height;
+    const canvas: HTMLCanvasElement = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
 
-    // const context = canvas.getContext('2d');
-    // if (context) {
-    //     const backgroundColor = "#fef3c7";
-    //     // Fill padding
-    //     context.fillStyle = backgroundColor;
-    //     context.fillRect(0, 0, width, padding);
-    //     context.fillRect(0, 0, padding, height);
-    //     context.fillRect(0, height - padding, width, padding);
-    //     context.fillRect(width - padding, 0, padding, height);
+    const context = canvas.getContext('2d');
+    if (context) {
+        const backgroundColor = "#fef3c7";
+        // Fill padding
+        context.fillStyle = backgroundColor;
+        context.fillRect(0, 0, width, padding);
+        context.fillRect(0, 0, padding, height);
+        context.fillRect(0, height - padding, width, padding);
+        context.fillRect(width - padding, 0, padding, height);
 
-    //     // Fill tiles
+        // Fill tiles
 
-    //     for (let row = 0; row < layout.length; row++) {
-    //         for (let col = 0; col < layout[0].length; col++) {
-    //             const tile = layout[row][col];
+        for (let row = 0; row < layout.length; row++) {
+            for (let col = 0; col < layout[0].length; col++) {
+                // const tile = layout[row][col];
 
-    //             context.fillStyle = gridLineColor;
+                context.fillStyle = gridLineColor;
 
-    //         }
-    //     }
+            }
+        }
 
-    // }
-    // return canvas.toDataURL('image/png');
+    }
+    return canvas.toDataURL('image/png');
 }

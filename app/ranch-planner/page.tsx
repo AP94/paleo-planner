@@ -287,19 +287,19 @@ export default function RanchPlanner() {
         }
     }
 
-    const generateLayoutImage = () => {
-        // const imageDataURL = createRanchImage(layout);
+    // const generateLayoutImage = () => {
+    //     const imageDataURL = createRanchImage(layout);
 
-        // const link = document.createElement('a')
-        // link.href = imageDataURL
-        // link.download = 'Image'
-        // document.body.appendChild(link)
-        // link.click()
-        // document.body.removeChild(link)
-        // window.open(imageDataURL,'Image','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
+    //     const link = document.createElement('a')
+    //     link.href = imageDataURL
+    //     link.download = 'Image'
+    //     document.body.appendChild(link)
+    //     link.click()
+    //     document.body.removeChild(link)
+    //     window.open(imageDataURL,'Image','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
         
-        // window.open(imageDataURL,'Image');
-    }
+    //     window.open(imageDataURL,'Image');
+    // }
 
     return (
       <div className="h-screen p-4 items-center justify-items-center">

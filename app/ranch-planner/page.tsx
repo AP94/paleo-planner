@@ -7,7 +7,7 @@ import { Tooltip } from 'react-tooltip'
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement, gridLineColor, createRanchImage } from './ranch-layout-updater';
+import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement, gridLineColor } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 
@@ -287,6 +287,20 @@ export default function RanchPlanner() {
         }
     }
 
+    const generateLayoutImage = () => {
+        // const imageDataURL = createRanchImage(layout);
+
+        // const link = document.createElement('a')
+        // link.href = imageDataURL
+        // link.download = 'Image'
+        // document.body.appendChild(link)
+        // link.click()
+        // document.body.removeChild(link)
+        // window.open(imageDataURL,'Image','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
+        
+        // window.open(imageDataURL,'Image');
+    }
+
     return (
       <div className="h-screen p-4 items-center justify-items-center">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-4 items-center flex-none overflow-hidden gap-3">
@@ -308,6 +322,9 @@ export default function RanchPlanner() {
                 <div className="flex flex-col place-content-center h-full font-bold">
                     <button className="h-8 w-20" onClick={resetLayout}>Reset</button>
                 </div>
+                {/* <div className="flex flex-col place-content-center h-full font-bold">
+                    <button className="h-8 w-20" onClick={generateLayoutImage}>Generate Image</button>
+                </div> */}
             </div>
             <div className="flex grow bg-amber-100">
               <AutoSizer>

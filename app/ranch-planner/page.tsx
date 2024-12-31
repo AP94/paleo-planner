@@ -3,10 +3,11 @@
 import { FixedSizeGrid as Grid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import React, { useState } from "react";
+import { Tooltip } from 'react-tooltip'
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement } from './ranch-layout-updater';
+import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement, gridLineColor, createRanchImage } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 
@@ -98,7 +99,7 @@ export default function RanchPlanner() {
 
         const dyanmicStyle = {
             ...data.style,
-            borderColor: `${tile.type === TileType.Background || tile.type === TileType.Border ? "transparent" : "rgb(82 82 82 / var(--tw-bg-opacity, 1))"}`,
+            borderColor: `${tile.type === TileType.Background || tile.type === TileType.Border ? "transparent" : gridLineColor}`,
             backgroundColor: backgroundColor
         }
 
@@ -248,12 +249,20 @@ export default function RanchPlanner() {
                 }
 
                 buttonGroupElements.push(
-                    <button key={nanoid()}
-                            className="grid w-10 h-10 p-1 border-2 rounded-lg place-content-center"
-                            style={buttonStyle}
-                            onClick={() => onToolbarButtonClicked(button)}>
-                        <img className="max-h-6" src={button.iconURL} alt={button.label} />
-                    </button>
+                    <div key={nanoid()}>
+                    <Tooltip id={`${button.label}-tooltip`} />
+                    <a
+                        data-tooltip-id={`${button.label}-tooltip`}
+                        data-tooltip-content={button.label}
+                        data-tooltip-place="top"
+                    >
+                        <button className="grid w-10 h-10 p-1 border-2 rounded-lg place-content-center"
+                                style={buttonStyle}
+                                onClick={() => onToolbarButtonClicked(button)}>
+                            <img className="max-h-6" src={button.iconURL} alt={button.label} />
+                        </button>
+                    </a>
+                    </div>
                 )
             }
 
@@ -261,9 +270,9 @@ export default function RanchPlanner() {
                 <div key={nanoid()}
                     className="flex flex-col place-content-center text-center m-auto">
                     <div>{buttonGroup.label}</div>
-                    <div className="flex flex-row gap-2 place-content-center px-2">
-                        {buttonGroupElements}
-                    </div>
+                        <div className="flex flex-row gap-2 place-content-center px-2">
+                            {buttonGroupElements}
+                        </div>
                 </div>
             )
         }

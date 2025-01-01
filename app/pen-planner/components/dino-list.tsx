@@ -11,7 +11,7 @@ export default function dinoList(data: DinoListData) {
 
     const dinoListElements = data.dinos.map(dino => (
         <div key={dino.id}
-            className={`flex flex-col items-center place-content-between bg-amber-200 p-1 w-40 shrink-0 rounded border-3 ${data.selectedDino?.id == dino.id ? "border-[#34A983]" : "border-transparent"} sm:p-2 sm:w-44`}
+            className={`flex flex-col items-center place-content-between bg-amber-200 p-1 w-40 shrink-0 rounded border-3 ${data.selectedDinoID == dino.id ? "border-[#34A983]" : "border-transparent"} sm:p-2 sm:w-44`}
             onClick={() => data.onDinoClicked(dino.id)}>
             <div className="flex flex-row h-0 w-full place-content-between">
                 <div className="grid w-9 h-9 rounded-full bg-white sm:w-10 sm:h-10">
@@ -102,7 +102,7 @@ export default function dinoList(data: DinoListData) {
                     Add New Dino
                 </button>
                 <button
-                    className={`font-bold ${data.selectedDino ? "" : "disabled opacity-50"}`}
+                    className={`font-bold ${data.selectedDinoID !== "" ? "" : "disabled opacity-50"}`}
                     onClick={data.onMoveToNewPenClicked}>
                     Move to New Pen
                 </button>

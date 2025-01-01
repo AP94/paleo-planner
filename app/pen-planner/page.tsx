@@ -33,7 +33,7 @@ const smallDreamstoneLimit = 19;
 export default function PenPlanner() {
     const [showDinoSelection, setShowDinoSelection] = useState(false);
     const [dinos, setDinos] = useState<Dino[]>([lucky]);
-    const [selectedDino, setSelectedDino] = useState<Dino|null>(null);
+    const [selectedDinoID, setSelectedDinoID] = useState<string>("");
     const [pens, setPens] = useState<Pen[]>([]);
     const [largeDreamstoneCount, setLargeDreamstoneCount] = useState(largeDreamstoneLimit - 1);
     const [smallDreamstoneCount, setSmallDreamstoneCount] = useState(smallDreamstoneLimit);
@@ -58,15 +58,11 @@ export default function PenPlanner() {
     }
 
     const selectOrDeselectDino = (dinoID: string) => {
-        if (selectedDino?.id === dinoID) {
-            setSelectedDino(null);
+        if (selectedDinoID === dinoID) {
+            setSelectedDinoID("");
             return;
-        }
-        for (let i = 0; i < dinos.length; i++) {
-            if (dinos[i].id == dinoID) {
-                setSelectedDino(dinos[i]);
-                return;
-            }
+        } else {
+            setSelectedDinoID(dinoID);
         }
     }
 
@@ -79,19 +75,6 @@ export default function PenPlanner() {
                 }
             })
         })
-
-        if (dinoID === selectedDino?.id) {
-            setSelectedDino((prevDino) => {
-                let selectedDino = null;
-                if (prevDino) {
-                    selectedDino = {
-                        ...prevDino,
-                        name: name
-                    }
-                }
-                return selectedDino;
-            })
-        }
     }
 
     const updatePenDinoName = (penID: string, dinoID: string, name:string) => {
@@ -198,11 +181,19 @@ export default function PenPlanner() {
     }
 
     const addSelectedDinoToPen = (penID: string | null) => {
-        if (selectedDino) {
-            if (!!penID) {
-                // add dino to pen
-                setPens((pens) => {
-                    if (pens) {
+        if (selectedDinoID) {
+            let selectedDino = null;
+
+            for (let i = 0; i < dinos.length; i++) {
+                if (dinos[i].id === selectedDinoID) {
+                    selectedDino = dinos[i];
+                    break;
+                }
+            }
+            if (selectedDino) {
+                // If a pen is selected, add the dino to the pen
+                if (!!penID) {
+                    setPens((pens) => {
                         return pens.map((pen) => {
                             return pen.id != penID ? pen : 
                             {...pen,
@@ -211,30 +202,30 @@ export default function PenPlanner() {
                                 foodPerDay: calculateFoodPerDay([...pen.dinos, selectedDino])
                             }
                         })
-                    }
-                    return [];
-                })
-            } else {
-                // add new pen with dino, set pen's food and biome
-                setPens((pens) => {
-                    return [...pens,
-                        {
-                        id: nanoid(),
-                        biome: selectedDino.species.biome,
-                        minSize: calculateMinSize([selectedDino]),
-                        foodType: selectedDino.species.diet == Diet.Carnivore ? FoodType.Meat : FoodType.Plant,
-                        foodPerDay: calculateFoodPerDay([selectedDino]),
-                        dinos: [selectedDino]
-                    }
-                ]})
-            }
-            // Remove selected dino from dino list
-            setDinos((dinos) => {
-                return dinos.filter(dino => dino.id !== selectedDino.id);
-            })
+                    });
+                } else {
+                    // If no pen is selected, add new pen with dino, then set pen's food and biome
+                    setPens((pens) => {
+                        return [...pens,
+                            {
+                            id: nanoid(),
+                            biome: selectedDino.species.biome,
+                            minSize: calculateMinSize([selectedDino]),
+                            foodType: selectedDino.species.diet == Diet.Carnivore ? FoodType.Meat : FoodType.Plant,
+                            foodPerDay: calculateFoodPerDay([selectedDino]),
+                            dinos: [selectedDino]
+                        }
+                    ]})
+                }
 
-            // Deselect selected dino
-            setSelectedDino(null);
+                // Remove selected dino from dino list
+                setDinos((dinos) => {
+                    return dinos.filter(dino => dino.id !== selectedDinoID);
+                })
+
+                // Deselect selected dino
+                setSelectedDinoID("");
+            }
         }
     }
 
@@ -277,7 +268,7 @@ export default function PenPlanner() {
             const configObj: {dinos: Dino[], pens: Pen[]} = JSON.parse(config);
             setDinos(configObj.dinos);
             setPens(configObj.pens);
-            setSelectedDino(null);
+            setSelectedDinoID("");
 
             let dinoCount = configObj.dinos.length;
             let smallDSCount = 0;
@@ -355,7 +346,7 @@ export default function PenPlanner() {
         if (confirm("Are you sure you want to reset?")) {
             setDinos([lucky]);
             setPens([]);
-            setSelectedDino(null);
+            setSelectedDinoID("");
             setLargeDreamstoneCount(largeDreamstoneLimit - 1);
             setSmallDreamstoneCount(smallDreamstoneLimit);
         }
@@ -372,16 +363,16 @@ export default function PenPlanner() {
     }, []);
 
     useEffect(() => {
-        if (selectedDino) {
+        if (selectedDinoID) {
             for (let i = 0; i < dinos.length; i++) {
-                if (dinos[i].id == selectedDino.id) {
+                if (dinos[i].id == selectedDinoID) {
                     return;
                 }
             }
             // If the selected dino is no longer in the list, unset the selected dino
-            setSelectedDino(null);
+            setSelectedDinoID("");
         }
-    }, [dinos, selectedDino]);
+    }, [dinos, selectedDinoID]);
 
     useEffect(() => {
         updateCookies();
@@ -414,7 +405,7 @@ export default function PenPlanner() {
                 <div className="flex flex-col flex-none">
                     <DinoList 
                         dinos={dinos}
-                        selectedDino={selectedDino}
+                        selectedDinoID={selectedDinoID}
                         onDinoClicked={selectOrDeselectDino}
                         onRemoveDinoClicked={removeDino}
                         onAddDinoClicked={toggleShowDinoSelection}

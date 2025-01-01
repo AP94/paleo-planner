@@ -79,6 +79,19 @@ export default function PenPlanner() {
                 }
             })
         })
+
+        if (dinoID === selectedDino?.id) {
+            setSelectedDino((prevDino) => {
+                let selectedDino = null;
+                if (prevDino) {
+                    selectedDino = {
+                        ...prevDino,
+                        name: name
+                    }
+                }
+                return selectedDino;
+            })
+        }
     }
 
     const updatePenDinoName = (penID: string, dinoID: string, name:string) => {

@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="flex flex-col p-8 w-full h-full min-w-screen min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <div className="flex flex-col gap-2 place-content-center pt-3">
+      <div className="flex flex-col gap-2 place-content-center">
         <div className="flex w-full text-3xl place-content-center">
             <h1>Paleo Planner</h1>
         </div>

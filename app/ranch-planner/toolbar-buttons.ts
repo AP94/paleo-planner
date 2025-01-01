@@ -15,7 +15,7 @@ export enum ToolbarSetting {
     FenceEraser = "Clear Fencing",
     Fence = "Fence",
     Gate = "Gate",
-    Farm = "Farm",
+    Ranch = "Ranch",
     Valley = "Valley",
     Forest = "Forest",
     Desert = "Desert",
@@ -85,8 +85,8 @@ export const toolbarButtonGroups: (ButtonGroup)[] = [
     {
         buttons: [
             {
-                setting: ToolbarSetting.Farm,
-                label: ToolbarSetting.Farm,
+                setting: ToolbarSetting.Ranch,
+                label: ToolbarSetting.Ranch,
                 iconURL: "images/toolbar-icons/Farm-Icon.png"
             },
             {

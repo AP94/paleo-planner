@@ -28,7 +28,8 @@ export default function RanchPlanner() {
 
     const saveConfig = () => {
         const config = JSON.stringify({
-            layout: layout
+            layout: layout,
+            colorPalette: null
         });
         const file = new Blob([config], { type: 'text/plain;charset=utf-8' });
         saveAs(file, 'Paleo Planner Ranch Save.txt');
@@ -41,7 +42,7 @@ export default function RanchPlanner() {
         reader.onload = async (e) => { 
             try {
                 const config = (e.target?.result) as string;
-                const configObj: {layout: Tile[][]} = JSON.parse(config);
+                const configObj: {layout: Tile[][], colorPalette: null} = JSON.parse(config);
                 setLayout(configObj.layout);
                 reset();
             } catch {
@@ -147,8 +148,8 @@ export default function RanchPlanner() {
                     case (ToolbarSetting.Gate):
                         setObject(TileObject.Gate);
                         break;
-                    case (ToolbarSetting.Farm):
-                        setTile(TileType.Farm);
+                    case (ToolbarSetting.Ranch):
+                        setTile(TileType.Ranch);
                         break;
                     case (ToolbarSetting.Valley):
                         setTile(TileType.Valley);

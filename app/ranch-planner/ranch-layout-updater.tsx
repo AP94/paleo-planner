@@ -4,7 +4,7 @@ export enum TileType {
     Background,
     Border,
     Unplaceable,
-    Farm,
+    Ranch,
     Valley,
     Forest,
     Desert,
@@ -62,7 +62,7 @@ export const getTileColor = (type: TileType) => {
             return "#262626";
         case (TileType.Unplaceable):
             return "#797878";
-        case (TileType.Farm):
+        case (TileType.Ranch):
             return "#7ebb60";
         case (TileType.Valley):
             return "#3baf50";

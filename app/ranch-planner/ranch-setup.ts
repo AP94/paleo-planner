@@ -427,7 +427,7 @@ export const generateLayout = (): Tile[][] => {
                 }
             } else {
                 if (farmTile) {
-                    layout[row][col].type = TileType.Farm;
+                    layout[row][col].type = TileType.Ranch;
                 }
             }
         }

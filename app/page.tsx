@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <main className="flex flex-col p-8 w-full h-full min-w-screen min-h-screen font-[family-name:var(--font-geist-sans)]">
       <div className="flex flex-col gap-2 place-content-center pt-3">
         <div className="flex w-full text-3xl place-content-center">
             <h1>Paleo Planner</h1>
@@ -14,8 +14,8 @@ export default function Home() {
             <br/>Note that the pen planner uses browser cookies to remember your pens.</p>
         </div>
       </div>
-      <div className="flex flex-col row-start-2 place-content-center items-center sm:items-start">
-        <div className="flex gap-16 items-center flex-col sm:flex-row">
+      <div className="flex flex-col grow row-start-2 place-content-center items-center sm:items-start">
+        <div className="flex w-full gap-16 place-content-center flex-col sm:flex-row">
           <Link href="/pen-planner">
             <button className="flex rounded-md bg-gradient-to-b from-signpost-top to-signpost-bottom border-8 border-signpost-back text-amber-900 w-96 h-56 text-3xl font-bold place-content-center place-items-center">
               Pen Planner

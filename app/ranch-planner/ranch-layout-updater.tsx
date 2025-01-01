@@ -1,3 +1,5 @@
+import { nanoid } from "nanoid";
+
 export enum TileType {
     Background,
     Border,
@@ -364,6 +366,7 @@ export const createRanchImage = (layout: Tile[][]) => {
     const height = padding * 2 + ranchHeight * tileSize + (ranchHeight - 1) * tileBorderWidth * 2
 
     const canvas: HTMLCanvasElement = document.createElement('canvas');
+    canvas.id = nanoid();
     canvas.width = width;
     canvas.height = height;
 
@@ -754,5 +757,6 @@ export const createRanchImage = (layout: Tile[][]) => {
             }
         }
     }
-    return canvas.toDataURL('image/png');
+
+    return canvas;
 }

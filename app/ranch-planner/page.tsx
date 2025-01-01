@@ -288,8 +288,11 @@ export default function RanchPlanner() {
     }
 
     const generateLayoutImage = () => {
-        const imageDataURL = createRanchImage(layout);
-        window.open(imageDataURL,'Image.png','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
+        const ranchImageCanvas = createRanchImage(layout);
+        const newTab = window.open();
+        if (newTab) {
+            newTab.document.body.append(ranchImageCanvas);
+        }
     }
 
     return (
@@ -324,9 +327,6 @@ export default function RanchPlanner() {
           <div className="flex flex-col border-4 border-amber-400 w-full h-full rounded">
             <div className="flex flex-row flex-nowrap w-full overflow-x-auto content-center py-1 px-5 gap-2 bg-amber-200 border-b-3 border-amber-400 shrink-0">
                 {generateButtonElements()}
-                <div className="flex flex-col place-content-center h-full font-bold">
-                    
-                </div>
             </div>
             <div className="flex grow bg-amber-100">
               <AutoSizer>

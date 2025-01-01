@@ -11,7 +11,7 @@ export default function Home() {
         <h1>Paleo Planner</h1>
         </div>
         <div className="flex flex-col w-full text-xl">
-            <p className="w-3/4 text-center m-auto">This is a fan-made planning app for Paleo Pines. The Pen Planner lets you plan out which dinos you'd like to house together, and the Ranch Planner lets you plan out the placements of crops, pens, and other objects on your ranch.
+            <p className="w-3/4 text-center m-auto">This is a fan-made planning app for Paleo Pines. The Pen Planner lets you plan out which dinos you&apos;d like to house together, and the Ranch Planner lets you plan out the placements of crops, pens, and other objects on your ranch.
             <br/>Note that the pen planner uses browser cookies to remember your pens.</p>
         </div>
       </header>
@@ -30,7 +30,7 @@ export default function Home() {
         </div>
       </main>
       <footer className="flex flex-col row-start-3 gap-6 flex-wrap items-center justify-center">
-        <a className="text-xl" href="https://ko-fi.com/surgeflare">Donate if you'd like!</a>
+        <a className="text-xl" href="https://ko-fi.com/surgeflare">Donate if you&apos;d like!</a>
         <span className="cursor-default">
           Created by Discord user surgeFlare #7007
         </span>

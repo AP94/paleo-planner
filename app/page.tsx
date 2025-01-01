@@ -21,7 +21,7 @@ export default function Home() {
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <span className="cursor-default">
-          Created by Discord user surgeFlare
+          Created by Discord user surgeFlare #7007
         </span>
       </footer>
     </div>

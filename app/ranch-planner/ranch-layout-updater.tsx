@@ -150,7 +150,7 @@ export const getObjectElement = (object: TileObject) => {
                 break;
             case (TileObject.Fence):
                 objectElement = (
-                    <div className="w-1/2 h-1/2 rounded-full"
+                    <div className="w-3/5 h-3/5 rounded-full"
                         style={objectStyle}></div>
                 );
                 break;
@@ -174,13 +174,13 @@ export const getObjectElement = (object: TileObject) => {
                 break;
             case (TileObject.Bush):
                 objectElement = (
-                    <div className="w-3/4 h-3/5 rounded"
+                    <div className="w-3/4 h-3/5 rounded-lg"
                         style={objectStyle}></div>
                 );
                 break;
             case (TileObject.FruitTree):
                 objectElement = (
-                    <div className="w-4/5 h-4/5 rounded-full"
+                    <div className="w-full h-full rounded-full"
                         style={objectStyle}></div>
                 );
                 break;
@@ -353,12 +353,15 @@ export const isInRange = (startPos: Position, endPos: Position, pos: Position): 
 }
 
 export const createRanchImage = (layout: Tile[][]) => {
-    const padding = 25;
-    const tileSize = 10;
+    const padding = 50;
+    const tileSize = 22;
     const tileBorderWidth = 1;
 
-    const width = padding * 2 + layout[0].length * tileSize + (layout[0].length - 1) * tileBorderWidth * 2
-    const height = padding * 2 + layout.length * tileSize + (layout.length - 1) * tileBorderWidth * 2
+    const ranchWidth = 117;
+    const ranchHeight = 73;
+
+    const width = padding * 2 + ranchWidth * tileSize + (ranchWidth - 1) * tileBorderWidth * 2
+    const height = padding * 2 + ranchHeight * tileSize + (ranchHeight - 1) * tileBorderWidth * 2
 
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     canvas.width = width;
@@ -366,7 +369,7 @@ export const createRanchImage = (layout: Tile[][]) => {
 
     const context = canvas.getContext('2d');
     if (context) {
-        const backgroundColor = "#fef3c7";
+        const backgroundColor = "#FEF3C7";
         // Fill padding
         context.fillStyle = backgroundColor;
         context.fillRect(0, 0, width, padding);
@@ -375,16 +378,381 @@ export const createRanchImage = (layout: Tile[][]) => {
         context.fillRect(width - padding, 0, padding, height);
 
         // Fill tiles
-
-        for (let row = 0; row < layout.length; row++) {
-            for (let col = 0; col < layout[0].length; col++) {
-                // const tile = layout[row][col];
-
+        for (let col = 0; col < ranchWidth; col++) {
+            for (let row = 0; row < ranchHeight; row++) {
+                const tile = layout[row][col];
+                const tileOriginX = padding + col * (tileSize + tileBorderWidth*2);
+                const tileOriginY = padding + row * (tileSize + tileBorderWidth*2);
+                
                 context.fillStyle = gridLineColor;
+                context.fillRect(tileOriginX, tileOriginY, tileSize + tileBorderWidth*2, tileSize + tileBorderWidth*2);
 
+                if (tile.type === TileType.Background) {
+                    context.fillStyle = backgroundColor;
+                    context.fillRect(tileOriginX, tileOriginY, tileSize + tileBorderWidth*2, tileSize + tileBorderWidth*2);
+                }
+                else if (tile.type === TileType.Border) {
+                    context.fillStyle = getTileColor(tile.type);
+                    context.fillRect(tileOriginX, tileOriginY, tileSize + tileBorderWidth*2, tileSize + tileBorderWidth*2);
+                }
+                else {
+                    context.fillStyle = getTileColor(tile.type);
+                    context.fillRect(tileOriginX + 1, tileOriginY + 1, tileSize, tileSize);
+                }
+
+                // Fill objects, if they exist
+                const object = tile.object;
+
+                if (object) {
+                    const objectColor = getObjectColor(object) || "#000";
+                    const objectBorderColor = getBorderColor(object) || "#000";
+
+                    if (object === TileObject.Water) {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 2;
+                        let y = tileOriginY + 1;
+                        context.fillRect(x, y, tileSize - 2, tileSize);
+                        x = tileOriginX + 1;
+                        y = tileOriginY + 2;
+                        context.fillRect(x, y, tileSize, tileSize - 2);
+                    }
+                    if (object === TileObject.Bush) {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 9;
+                        let y = tileOriginY + 7;
+                        context.fillRect(x, y, 6, 10);
+                        x = tileOriginX + 6;
+                        y = tileOriginY + 10;
+                        context.fillRect(x, y, 12, 4);
+                        x = tileOriginX + 7;
+                        y = tileOriginY + 8;
+                        context.fillRect(x, y, 10, 8);
+
+                        context.fillStyle = objectBorderColor;
+                        x = tileOriginX + 8;
+                        y = tileOriginY + 5;
+                        context.fillRect(x, y, 8, 2);
+                        y = tileOriginY + 17;
+                        context.fillRect(x, y, 8, 2);
+                        x = tileOriginX + 4;
+                        y = tileOriginY + 9;
+                        context.fillRect(x, y, 2, 6);
+                        x = tileOriginX + 18;
+                        context.fillRect(x, y, 2, 6);
+                        x = tileOriginX + 6;
+                        y = tileOriginY + 6;
+                        context.fillRect(x, y, 3, 2);
+                        x = tileOriginX + 15;
+                        context.fillRect(x, y, 3, 2);
+                        y = tileOriginY + 16;
+                        context.fillRect(x, y, 3, 2);
+                        x = tileOriginX + 6;
+                        context.fillRect(x, y, 3, 2);
+                        x = tileOriginX + 5;
+                        y = tileOriginY + 7;
+                        context.fillRect(x, y, 2, 3);
+                        x = tileOriginX + 17;
+                        context.fillRect(x, y, 2, 3);
+                        y = tileOriginY + 14;
+                        context.fillRect(x, y, 2, 3);
+                        x = tileOriginX + 5;
+                        context.fillRect(x, y, 2, 3);
+                    }
+                    if (object === TileObject.Tree ||
+                        object === TileObject.FruitTree) {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 6;
+                        let y = tileOriginY + 2;
+                        context.fillRect(x, y, 12, 20);
+                        x = tileOriginX + 2;
+                        y = tileOriginY + 6;
+                        context.fillRect(x, y, 20, 12);
+                        x = tileOriginX + 4;
+                        y = tileOriginY + 4;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 18;
+                        context.fillRect(x, y, 2, 2);
+                        y = tileOriginY + 18;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 4;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 8;
+                        y = tileOriginY + 1;
+                        context.fillRect(x, y, 8, 1);
+                        y = tileOriginY + 22;
+                        context.fillRect(x, y, 8, 1);
+                        x = tileOriginX + 1;
+                        y = tileOriginY + 8;
+                        context.fillRect(x, y, 1, 8);
+                        x = tileOriginX + 22;
+                        context.fillRect(x, y, 1, 8);
+                        x = tileOriginX + 5;
+                        y = tileOriginY + 3;
+                        context.fillRect(x, y, 14, 1);
+                        y = tileOriginY + 20;
+                        context.fillRect(x, y, 14, 1);
+                        x = tileOriginX + 3;
+                        y = tileOriginY + 5;
+                        context.fillRect(x, y, 1, 14);
+                        x = tileOriginX + 20;
+                        context.fillRect(x, y, 1, 14);
+
+                        if (object === TileObject.FruitTree) {
+                            context.fillStyle = objectBorderColor;
+                            x = tileOriginX + 8;
+                            y = tileOriginY + 1;
+                            context.fillRect(x, y, 8, 2);
+                            y = tileOriginY + 21;
+                            context.fillRect(x, y, 8, 2);
+                            x = tileOriginX + 1;
+                            y = tileOriginY + 8;
+                            context.fillRect(x, y, 2, 8);
+                            x = tileOriginX + 21;
+                            context.fillRect(x, y, 2, 8);
+                            x = tileOriginX + 6;
+                            y = tileOriginY + 2;
+                            context.fillRect(x, y, 3, 2);
+                            x = tileOriginX + 15;
+                            context.fillRect(x, y, 3, 2);
+                            y = tileOriginY + 20;
+                            context.fillRect(x, y, 3, 2);
+                            x = tileOriginX + 6;
+                            context.fillRect(x, y, 3, 2);
+                            x = tileOriginX + 2;
+                            y = tileOriginY + 6;
+                            context.fillRect(x, y, 2, 3);
+                            x = tileOriginX + 20;
+                            context.fillRect(x, y, 2, 3);
+                            y = tileOriginY + 15;
+                            context.fillRect(x, y, 2, 3);
+                            x = tileOriginX + 2;
+                            context.fillRect(x, y, 2, 3);
+                            x = tileOriginX + 3;
+                            y = tileOriginY + 5;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 3;
+                            context.fillRect(x, y, 2, 2);
+                            y = tileOriginY + 17;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 3;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 5;
+                            y = tileOriginY + 3;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 17;
+                            context.fillRect(x, y, 2, 2);
+                            y = tileOriginY + 19;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 5;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 4;
+                            y = tileOriginY + 4;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 18;
+                            context.fillRect(x, y, 2, 2);
+                            y = tileOriginY + 18;
+                            context.fillRect(x, y, 2, 2);
+                            x = tileOriginX + 4;
+                            context.fillRect(x, y, 2, 2);
+                        }
+                    }
+                    if (object === TileObject.CookingPot ||
+                        object === TileObject.TenderPot ||
+                        object === TileObject.Dreamstone ||
+                        object === TileObject.Fence)
+                    {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 8;
+                        let y = tileOriginY + 6;
+                        context.fillRect(x, y, 8, 12);
+                        x = tileOriginX + 6;
+                        y = tileOriginY + 8;
+                        context.fillRect(x, y, 12, 8);
+                        x = tileOriginX + 5;
+                        y = tileOriginY + 10;
+                        context.fillRect(x, y, 1, 4);
+                        x = tileOriginX + 18;
+                        context.fillRect(x, y, 1, 4);
+                        x = tileOriginX + 10;
+                        y = tileOriginY + 5;
+                        context.fillRect(x, y, 4, 1);
+                        y = tileOriginY + 18;
+                        context.fillRect(x, y, 4, 1);
+                        x = tileOriginX + 7;
+                        y = tileOriginY + 7;
+                        context.fillRect(x, y, 1, 1);
+                        x = tileOriginX + 16;
+                        context.fillRect(x, y, 1, 1);
+                        y = tileOriginY + 16;
+                        context.fillRect(x, y, 1, 1);
+                        x = tileOriginX + 7;
+                        context.fillRect(x, y, 1, 1);
+
+                        if (object !== TileObject.Fence)
+                        {
+                            context.fillStyle = objectBorderColor;
+                            x = tileOriginX + 3;
+                            y = tileOriginY + 9;
+                            context.fillRect(x, y, 2, 6);
+                            x = tileOriginX + 19;
+                            context.fillRect(x, y, 2, 6);
+                            x = tileOriginX + 9;
+                            y = tileOriginY + 3;
+                            context.fillRect(x, y, 6, 2);
+                            y = tileOriginY + 19;
+                            context.fillRect(x, y, 6, 2);
+                            x = tileOriginX + 4;
+                            y = tileOriginY + 7;
+                            context.fillRect(x, y, 2, 3);
+                            x = tileOriginX + 18;
+                            context.fillRect(x, y, 2, 3);
+                            y = tileOriginY + 14;
+                            context.fillRect(x, y, 2, 3);
+                            x = tileOriginX + 4;
+                            context.fillRect(x, y, 2, 3);
+                            x = tileOriginX + 7;
+                            y = tileOriginY + 4;
+                            context.fillRect(x, y, 3, 2);
+                            x = tileOriginX + 14;
+                            context.fillRect(x, y, 3, 2);
+                            y = tileOriginY + 18;
+                            context.fillRect(x, y, 3, 2);
+                            x = tileOriginX + 7;
+                            context.fillRect(x, y, 3, 2);
+                            x = tileOriginX + 5;
+                            y = tileOriginY + 6;
+                            context.fillRect(x, y, 3, 1);
+                            x = tileOriginX + 16;
+                            context.fillRect(x, y, 3, 1);
+                            y = tileOriginY + 17;
+                            context.fillRect(x, y, 3, 1);
+                            x = tileOriginX + 5;
+                            context.fillRect(x, y, 3, 1);
+                            x = tileOriginX + 6;
+                            y = tileOriginY + 5;
+                            context.fillRect(x, y, 1, 3);
+                            x = tileOriginX + 17;
+                            context.fillRect(x, y, 1, 3);
+                            y = tileOriginY + 16;
+                            context.fillRect(x, y, 1, 3);
+                            x = tileOriginX + 6;
+                            context.fillRect(x, y, 1, 3);
+                        }
+                    }
+                    if (object === TileObject.Gate) {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 5;
+                        let y = tileOriginY + 5;
+                        context.fillRect(x, y, 14, 14);
+                        x = tileOriginX + 6;
+                        y = tileOriginY + 4;
+                        context.fillRect(x, y, 12, 1);
+                        y = tileOriginY + 19;
+                        context.fillRect(x, y, 12, 1);
+                        x = tileOriginX + 4;
+                        y = tileOriginY + 6;
+                        context.fillRect(x, y, 1, 12);
+                        x = tileOriginX + 19;
+                        context.fillRect(x, y, 1, 12);
+
+                    }
+                    if (object === TileObject.Composter) {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 5;
+                        let y = tileOriginY + 5;
+                        context.fillRect(x, y, 14, 14);
+                        context.fillStyle = objectBorderColor;
+                        x = tileOriginX + 4;
+                        y = tileOriginY + 3;
+                        context.fillRect(x, y, 16, 2);
+                        y = tileOriginY + 19;
+                        context.fillRect(x, y, 16, 2);
+                        x = tileOriginX + 3;
+                        y = tileOriginY + 4;
+                        context.fillRect(x, y, 2, 16);
+                        x = tileOriginX + 19;
+                        context.fillRect(x, y, 2, 16);
+                    }
+                    if (object === TileObject.Chest ||
+                        object === TileObject.FeedingTrough) {
+                            context.fillStyle = objectColor;
+                            let x = tileOriginX + 3;
+                            let y = tileOriginY + 5;
+                            context.fillRect(x, y, 18, 14);
+                            context.fillStyle = objectBorderColor;
+
+                            if (object === TileObject.Chest) {
+                                x = tileOriginX + 3;
+                                y = tileOriginY + 3;
+                                context.fillRect(x, y, 18, 2);
+                                y = tileOriginY + 19;
+                                context.fillRect(x, y, 18, 2);
+                                x = tileOriginX + 1;
+                                y = tileOriginY + 5;
+                                context.fillRect(x, y, 2, 14);
+                                x = tileOriginX + 21;
+                                context.fillRect(x, y, 2, 14);
+                                x = tileOriginX + 2;
+                                y = tileOriginY + 4;
+                                context.fillRect(x, y, 2, 2);
+                                x = tileOriginX + 20;
+                                context.fillRect(x, y, 2, 2);
+                                y = tileOriginY + 18;
+                                context.fillRect(x, y, 2, 2);
+                                x = tileOriginX + 2;
+                                context.fillRect(x, y, 2, 2);
+                            } else {
+                                x = tileOriginX + 2;
+                                y = tileOriginY + 3;
+                                context.fillRect(x, y, 20, 2);
+                                y = tileOriginY + 19;
+                                context.fillRect(x, y, 20, 2);
+                                x = tileOriginX + 1;
+                                y = tileOriginY + 4;
+                                context.fillRect(x, y, 2, 16);
+                                x = tileOriginX + 21;
+                                context.fillRect(x, y, 2, 16);
+                            }
+                    }
+                    if (object === TileObject.Decoration) {
+                        context.fillStyle = objectColor;
+                        let x = tileOriginX + 3;
+                        let y = tileOriginY + 3;
+                        context.fillRect(x, y, 18, 18);
+
+                        context.fillStyle = objectBorderColor;
+                        x = tileOriginX + 4;
+                        y = tileOriginY + 1;
+                        context.fillRect(x, y, 16, 2);
+                        y = tileOriginY + 21;
+                        context.fillRect(x, y, 16, 2);
+                        x = tileOriginX + 1;
+                        y = tileOriginY + 4;
+                        context.fillRect(x, y, 2, 16);
+                        x = tileOriginX + 21;
+                        context.fillRect(x, y, 2, 16);
+                        x = tileOriginX + 2;
+                        y = tileOriginY + 3;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 20;
+                        context.fillRect(x, y, 2, 2);
+                        y = tileOriginY + 19;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 2;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 3;
+                        y = tileOriginY + 2;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 19;
+                        context.fillRect(x, y, 2, 2);
+                        y = tileOriginY + 20;
+                        context.fillRect(x, y, 2, 2);
+                        x = tileOriginX + 3;
+                        context.fillRect(x, y, 2, 2);
+                    }
+                }
             }
         }
-
     }
     return canvas.toDataURL('image/png');
 }

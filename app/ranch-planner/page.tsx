@@ -7,7 +7,7 @@ import { Tooltip } from 'react-tooltip'
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
 import { CellData } from '@/resources/component-types';
-import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement, gridLineColor } from './ranch-layout-updater';
+import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement, gridLineColor, createRanchImage } from './ranch-layout-updater';
 import { generateLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 
@@ -287,44 +287,46 @@ export default function RanchPlanner() {
         }
     }
 
-    // const generateLayoutImage = () => {
-    //     const imageDataURL = createRanchImage(layout);
-
-    //     const link = document.createElement('a')
-    //     link.href = imageDataURL
-    //     link.download = 'Image'
-    //     document.body.appendChild(link)
-    //     link.click()
-    //     document.body.removeChild(link)
-    //     window.open(imageDataURL,'Image','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
-        
-    //     window.open(imageDataURL,'Image');
-    // }
+    const generateLayoutImage = () => {
+        const imageDataURL = createRanchImage(layout);
+        window.open(imageDataURL,'Image.png','width=largeImage.stylewidth,height=largeImage.style.height,resizable=1');
+    }
 
     return (
       <div className="h-screen p-4 items-center justify-items-center">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-4 items-center flex-none overflow-hidden gap-3">
-          <div className="flex px-2 h-0 justify-between w-full font-bold">
-                <button onClick={() => saveConfig()}>
-                    Save
+          <div className="flex px-2 justify-between w-full text-lg font-bold">
+                <button className="text-red-700 w-32" onClick={() => resetLayout()}>
+                    Reset
                 </button>
-                <label htmlFor="file-upload" className="cursor-pointer">
-                    Load
-                </label>
-                <input id="file-upload"
-                    className="hidden"
-                    type="file"
-                    onChange={(event) => loadConfig(event)}/>
-            </div><h1 className="text-2xl font-bold">Ranch Planner</h1>
+                <div className="flex flex-grow place-content-center">
+                    <h1 className="text-2xl font-bold m-auto">Ranch Planner</h1>
+                </div>
+                <div className="flex flex-col gap-2 w-32 place-content-center">
+                    <div className="flex gap-2 place-content-center">
+                        <button className="" onClick={() => saveConfig()}>
+                            Save
+                        </button>
+                        <label htmlFor="file-upload"
+                            className="cursor-pointer">
+                            Load
+                        </label>
+                        <input id="file-upload"
+                            className="hidden"
+                            type="file"
+                            onChange={(event) => loadConfig(event)}/>
+                    </div>
+                    <button className="" onClick={generateLayoutImage}>
+                        View As Image
+                    </button>
+                </div>
+            </div>
           <div className="flex flex-col border-4 border-amber-400 w-full h-full rounded">
             <div className="flex flex-row flex-nowrap w-full overflow-x-auto content-center py-1 px-5 gap-2 bg-amber-200 border-b-3 border-amber-400 shrink-0">
                 {generateButtonElements()}
                 <div className="flex flex-col place-content-center h-full font-bold">
-                    <button className="h-8 w-20" onClick={resetLayout}>Reset</button>
+                    
                 </div>
-                {/* <div className="flex flex-col place-content-center h-full font-bold">
-                    <button className="h-8 w-20" onClick={generateLayoutImage}>Generate Image</button>
-                </div> */}
             </div>
             <div className="flex grow bg-amber-100">
               <AutoSizer>

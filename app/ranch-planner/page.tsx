@@ -364,7 +364,7 @@ export default function RanchPlanner() {
                     </button>
                 </div>
             </div>
-          <div className="flex flex-col border-4 border-amber-400 w-full rounded flex-nowrap overflow-hidden">
+          <div className="flex flex-col flex-grow border-4 border-amber-400 w-full rounded flex-nowrap overflow-hidden">
             <div className="flex flex-row flex-nowrap w-full overflow-x-auto content-center py-1 px-5 gap-2 bg-amber-200 border-b-3 border-amber-400 shrink-0">
                 {generateButtonElements()}
             </div>

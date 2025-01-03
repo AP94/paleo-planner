@@ -1,6 +1,4 @@
-
-import { nanoid } from "nanoid";
-import { Tile, TileType, TileObject, Position, gridLineColor, getTileColor, getObjectColor, getBorderColor, ranchHeight, ranchWidth } from "./ranch-constants";
+import { Tile, TileType, TileObject, Position } from "./ranch-constants";
 
 export const getTile = (layout: Tile[][], row: number, col: number): Tile => {
     return layout[row][col];

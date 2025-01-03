@@ -33,9 +33,3 @@ export interface SpeciesSelectData {
     onSpeciesClicked: (species: DinoSpecies) => void;
     onCloseSpeciesSelect: () => void;
 }
-
-export interface CellData {
-    columnIndex: number,
-    rowIndex: number,
-    style: any
-}

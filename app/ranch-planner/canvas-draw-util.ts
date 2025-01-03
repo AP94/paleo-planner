@@ -20,7 +20,7 @@ export const clearCanvas = (canvas: HTMLCanvasElement) => {
     }
 }
 
-export const createRanchImageBackground = (canvas: HTMLCanvasElement) => {
+export const drawBackground = (canvas: HTMLCanvasElement) => {
     const tileSize = 44;
     const tileBorderWidth = 2;
 
@@ -248,7 +248,7 @@ export const drawSelection = (canvas: HTMLCanvasElement, pos1: Position, pos2: P
 export const createRanchImage = (layout: Tile[][]) => {
     const ranchCanvas: HTMLCanvasElement = document.createElement('canvas');
     const finalCanvas: HTMLCanvasElement = document.createElement('canvas');
-    createRanchImageBackground(ranchCanvas);
+    drawBackground(ranchCanvas);
     drawLayout(ranchCanvas, layout, false);
 
     const padding = 50;

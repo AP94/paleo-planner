@@ -8,7 +8,7 @@ import { setTileObject, setTileType, clearFences, placeFences } from './ranch-la
 import { generateLayout, standardLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
 import { Position, Tile, TileObject, TileType } from './ranch-constants';
-import { canvasToLayoutPosition, createRanchImageBackground, drawLayout, drawSelection, clearCanvas, createRanchImage } from "./canvas-draw-util";
+import { canvasToLayoutPosition, drawBackground, drawLayout, drawSelection, clearCanvas, createRanchImage } from "./canvas-draw-util";
 
 enum ZoomLevel {
     XSmall = 0,
@@ -192,8 +192,8 @@ export default function RanchPlanner() {
         }
     }
 
-    const onCanvasMouseDown = (e: any) => {
-        const rect = e.target.getBoundingClientRect();
+    const onCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        const rect = (e.target as Element).getBoundingClientRect();
         const canvasX = e.clientX - rect.left;
         const canvasY = e.clientY - rect.top;
 
@@ -202,8 +202,8 @@ export default function RanchPlanner() {
         setCurrentTilePos(layoutPosition);
     }
 
-    const onCanvasMouseMove = (e: any) => {
-        const rect = e.target.getBoundingClientRect();
+    const onCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        const rect = (e.target as Element).getBoundingClientRect();
         const canvasX = e.clientX - rect.left;
         const canvasY = e.clientY - rect.top;
 
@@ -211,7 +211,7 @@ export default function RanchPlanner() {
         setCurrentTilePos(layoutPosition);
     }
 
-    const onCanvasMouseUp = (e: any) => {
+    const onCanvasMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
         // draw tiles
         const setTile = (type: TileType) => {
             if (initialTilePos && currentTilePos) {
@@ -317,7 +317,7 @@ export default function RanchPlanner() {
 
     useEffect(() => {
         const bgCanvas = document.getElementById('background-canvas') as HTMLCanvasElement;
-        createRanchImageBackground(bgCanvas);
+        drawBackground(bgCanvas);
     }, []);
 
     useEffect(() => {

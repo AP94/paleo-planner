@@ -1,29 +1,35 @@
 "use client"; // This is a client component
 
-import { FixedSizeGrid as Grid } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tooltip } from 'react-tooltip'
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
-import { CellData } from '@/resources/component-types';
-import { setTileObject, TileObject, TileType, Position, isInRange, setTileType, getTileColor, Tile, clearFences, placeFences, getObjectElement, gridLineColor, createRanchImage } from './ranch-layout-updater';
-import { generateLayout } from './ranch-setup';
+import { setTileObject, setTileType, clearFences, placeFences } from './ranch-layout-updater';
+import { generateLayout, standardLayout } from './ranch-setup';
 import { ToolbarSetting, ToolbarButton, toolbarButtonGroups } from './toolbar-buttons';
+import { Position, Tile, TileObject, TileType } from './ranch-constants';
+import { canvasToLayoutPosition, drawBackground, drawLayout, drawSelection, clearCanvas, createRanchImage } from "./canvas-draw-util";
 
+enum ZoomLevel {
+    XSmall = 0,
+    Small,
+    Medium,
+    Large,
+    XLarge,
+    Full
+}
 
 export default function RanchPlanner() {
-    const zoomLevels = [8, 12, 16, 20, 24];
-    const [zoomLevel, setZoomLevel] = useState(2);
+    const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(ZoomLevel.Medium);
     const [toolbarSetting, setToolbarSetting] = useState<ToolbarSetting>(ToolbarSetting.None);
-    const [layout, setLayout] = useState<Tile[][]>(generateLayout());
-    const [currentMouseLocation, setCurrentMouseLocation] = useState<Position|null>(null);
-    const [initialClickLocation, setInitialClickLocation] = useState<Position|null>(null);
+    const [layout, setLayout] = useState<Tile[][]>(standardLayout);
+    const [initialTilePos, setInitialClickTilePos] = useState<Position|null>(null);
+    const [currentTilePos, setCurrentTilePos] = useState<Position|null>(null);
 
     const reset = () => {
         setToolbarSetting(ToolbarSetting.None);
-        setInitialClickLocation(null);
-        setCurrentMouseLocation(null);
+        setInitialClickTilePos(null);
+        setCurrentTilePos(null);
     }
 
     const saveConfig = () => {
@@ -58,13 +64,13 @@ export default function RanchPlanner() {
     }
 
     const decreaseZoomLevel = () => {
-        if (zoomLevel > 0) {
+        if (zoomLevel > ZoomLevel.XSmall) {
             setZoomLevel((prevLevel) => prevLevel - 1);
         }
     }
     
     const increaseZoomLevel = () => {
-        if (zoomLevel < 4) {
+        if (zoomLevel < ZoomLevel.Full) {
             setZoomLevel((prevLevel) => prevLevel + 1);
         }
     }
@@ -81,150 +87,6 @@ export default function RanchPlanner() {
             setToolbarSetting(newSetting);
         }
     }
-
-    const Cell = (data: CellData) => {
-        const tile = layout[data.rowIndex][data.columnIndex];
-        const tilePos = { x: data.columnIndex, y: data.rowIndex };
-
-        let backgroundColor = "transparent";
-
-        if (tile.type !== TileType.Background &&
-            tile.type !== TileType.Border &&
-            initialClickLocation &&
-            currentMouseLocation &&
-            isInRange(initialClickLocation, currentMouseLocation, tilePos)) {
-            backgroundColor = "rgb(167 243 208 / var(--tw-bg-opacity, 1))";
-        } else {
-            backgroundColor = getTileColor(tile.type);
-        }
-
-        const dyanmicStyle = {
-            ...data.style,
-            borderColor: `${tile.type === TileType.Background || tile.type === TileType.Border ? "transparent" : gridLineColor}`,
-            backgroundColor: backgroundColor
-        }
-
-        const onTileMouseDown = () => {
-            setInitialClickLocation(tilePos);
-        }
-
-        const onTileMouseUp = () => {
-            const setTile = (type: TileType) => {
-                if (initialClickLocation && currentMouseLocation) {
-                    setLayout(setTileType(layout, initialClickLocation, currentMouseLocation, type));
-                }
-            }
-
-            const setObject = (object: TileObject) => {
-                if (initialClickLocation && currentMouseLocation) {
-                    setLayout(setTileObject(layout, initialClickLocation, currentMouseLocation, object));
-                }
-            }
-
-            const setFences = () => {
-                if (initialClickLocation && currentMouseLocation) {
-                    setLayout(placeFences(layout, initialClickLocation, currentMouseLocation));
-                }
-            }
-
-            const removeFences = () => {
-                if (initialClickLocation && currentMouseLocation) {
-                    setLayout(clearFences(layout, initialClickLocation, currentMouseLocation));
-                }
-            }
-
-            // If ToolbarSetting is Eraser, set object to null
-            if (toolbarSetting !== ToolbarSetting.None) {
-                switch (toolbarSetting) {
-                    case (ToolbarSetting.ObjectEraser):
-                        setObject(TileObject.None);
-                        break;
-                    case (ToolbarSetting.FenceEraser):
-                        removeFences();
-                        break;
-                    case (ToolbarSetting.Fence):
-                        setFences();
-                        break;
-                    case (ToolbarSetting.Gate):
-                        setObject(TileObject.Gate);
-                        break;
-                    case (ToolbarSetting.Ranch):
-                        setTile(TileType.Ranch);
-                        break;
-                    case (ToolbarSetting.Valley):
-                        setTile(TileType.Valley);
-                        break;
-                    case (ToolbarSetting.Forest):
-                        setTile(TileType.Forest);
-                        break;
-                    case (ToolbarSetting.Desert):
-                        setTile(TileType.Desert);
-                        break;
-                    case (ToolbarSetting.DirtPath):
-                        setTile(TileType.DirtPath);
-                        break;
-                    case (ToolbarSetting.StonePath):
-                        setTile(TileType.StonePath);
-                        break;
-                    case (ToolbarSetting.CeramicPath):
-                        setTile(TileType.CeramicPath);
-                        break;
-                    case (ToolbarSetting.Crop):
-                        setTile(TileType.Crop);
-                        break;
-                    case (ToolbarSetting.TenderPot):
-                        setObject(TileObject.TenderPot);
-                        break;
-                    case (ToolbarSetting.Water):
-                        setObject(TileObject.Water);
-                        break;
-                    case (ToolbarSetting.Bush):
-                        setObject(TileObject.Bush);
-                        break;
-                    case (ToolbarSetting.FruitTree):
-                        setObject(TileObject.FruitTree);
-                        break;
-                    case (ToolbarSetting.Tree):
-                        setObject(TileObject.Tree);
-                        break;
-                    case (ToolbarSetting.Dreamstone):
-                        setObject(TileObject.Dreamstone);
-                        break;
-                    case (ToolbarSetting.Chest):
-                        setObject(TileObject.Chest);
-                        break;
-                    case (ToolbarSetting.CookingPot):
-                        setObject(TileObject.CookingPot);
-                        break;
-                    case (ToolbarSetting.FeedingTrough):
-                        setObject(TileObject.FeedingTrough);
-                        break;
-                    case (ToolbarSetting.Composter):
-                        setObject(TileObject.Composter);
-                        break;
-                    case (ToolbarSetting.Decoration):
-                        setObject(TileObject.Decoration);
-                        break;
-                }
-            }
-
-            setInitialClickLocation(null);
-        }
-
-        const onTileMouseEnter = () => {
-            setCurrentMouseLocation(tilePos);
-        }
-
-        return (
-        <div id={`${data.columnIndex}x${data.rowIndex}y`}
-            className="flex place-items-center place-content-center border-1"
-            style={dyanmicStyle}
-            onMouseDown={onTileMouseDown}
-            onMouseUp={onTileMouseUp}
-            onMouseEnter={onTileMouseEnter}>
-            {getObjectElement(tile.object)}
-        </div>
-    )}
 
     const generateButtonElements = () => {
         const elements = [];
@@ -296,6 +158,183 @@ export default function RanchPlanner() {
         }
     }
 
+    const getCanvasWidth = () => {
+        switch (zoomLevel) {
+            case ZoomLevel.XSmall:
+                return 1400;
+            case ZoomLevel.Small:
+                return 2000;
+            case ZoomLevel.Medium:
+                return 2800;
+            case ZoomLevel.Large:
+                return 3600;
+            case ZoomLevel.XLarge:
+                return 4500;
+            default:
+                return 5612;
+        }
+    }
+
+    const getCanvasHeight = () => {
+        switch (zoomLevel) {
+            case ZoomLevel.XSmall:
+                return 873;
+            case ZoomLevel.Small:
+                return 1247;
+            case ZoomLevel.Medium:
+                return 1746;
+            case ZoomLevel.Large:
+                return 2245;
+            case ZoomLevel.XLarge:
+                return 2806;
+            default:
+                return 3500;
+        }
+    }
+
+    const onCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        const rect = (e.target as Element).getBoundingClientRect();
+        const canvasX = e.clientX - rect.left;
+        const canvasY = e.clientY - rect.top;
+
+        const layoutPosition = canvasToLayoutPosition(canvasX, canvasY, getCanvasWidth(), getCanvasHeight());
+        setInitialClickTilePos(layoutPosition);
+        setCurrentTilePos(layoutPosition);
+    }
+
+    const onCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        const rect = (e.target as Element).getBoundingClientRect();
+        const canvasX = e.clientX - rect.left;
+        const canvasY = e.clientY - rect.top;
+
+        const layoutPosition = canvasToLayoutPosition(canvasX, canvasY, getCanvasWidth(), getCanvasHeight());
+        setCurrentTilePos(layoutPosition);
+    }
+
+    const onCanvasMouseUp = () => {
+        // draw tiles
+        const setTile = (type: TileType) => {
+            if (initialTilePos && currentTilePos) {
+                setLayout(setTileType(layout, initialTilePos, currentTilePos, type));
+            }
+        }
+
+        const setObject = (object: TileObject) => {
+            if (initialTilePos && currentTilePos) {
+                setLayout(setTileObject(layout, initialTilePos, currentTilePos, object));
+            }
+        }
+
+        const setFences = () => {
+            if (initialTilePos && currentTilePos) {
+                setLayout(placeFences(layout, initialTilePos, currentTilePos));
+            }
+        }
+
+        const removeFences = () => {
+            if (initialTilePos && currentTilePos) {
+                setLayout(clearFences(layout, initialTilePos, currentTilePos));
+            }
+        }
+
+        if (toolbarSetting !== ToolbarSetting.None) {
+            switch (toolbarSetting) {
+                case (ToolbarSetting.ObjectEraser):
+                    setObject(TileObject.None);
+                    break;
+                case (ToolbarSetting.FenceEraser):
+                    removeFences();
+                    break;
+                case (ToolbarSetting.Fence):
+                    setFences();
+                    break;
+                case (ToolbarSetting.Gate):
+                    setObject(TileObject.Gate);
+                    break;
+                case (ToolbarSetting.Ranch):
+                    setTile(TileType.Ranch);
+                    break;
+                case (ToolbarSetting.Valley):
+                    setTile(TileType.Valley);
+                    break;
+                case (ToolbarSetting.Forest):
+                    setTile(TileType.Forest);
+                    break;
+                case (ToolbarSetting.Desert):
+                    setTile(TileType.Desert);
+                    break;
+                case (ToolbarSetting.DirtPath):
+                    setTile(TileType.DirtPath);
+                    break;
+                case (ToolbarSetting.StonePath):
+                    setTile(TileType.StonePath);
+                    break;
+                case (ToolbarSetting.CeramicPath):
+                    setTile(TileType.CeramicPath);
+                    break;
+                case (ToolbarSetting.Crop):
+                    setTile(TileType.Crop);
+                    break;
+                case (ToolbarSetting.TenderPot):
+                    setObject(TileObject.TenderPot);
+                    break;
+                case (ToolbarSetting.Water):
+                    setObject(TileObject.Water);
+                    break;
+                case (ToolbarSetting.Bush):
+                    setObject(TileObject.Bush);
+                    break;
+                case (ToolbarSetting.FruitTree):
+                    setObject(TileObject.FruitTree);
+                    break;
+                case (ToolbarSetting.Tree):
+                    setObject(TileObject.Tree);
+                    break;
+                case (ToolbarSetting.Dreamstone):
+                    setObject(TileObject.Dreamstone);
+                    break;
+                case (ToolbarSetting.Chest):
+                    setObject(TileObject.Chest);
+                    break;
+                case (ToolbarSetting.CookingPot):
+                    setObject(TileObject.CookingPot);
+                    break;
+                case (ToolbarSetting.FeedingTrough):
+                    setObject(TileObject.FeedingTrough);
+                    break;
+                case (ToolbarSetting.Composter):
+                    setObject(TileObject.Composter);
+                    break;
+                case (ToolbarSetting.Decoration):
+                    setObject(TileObject.Decoration);
+                    break;
+            }
+        }
+
+        setInitialClickTilePos(null);
+        setCurrentTilePos(null);
+    }
+
+    useEffect(() => {
+        const bgCanvas = document.getElementById('background-canvas') as HTMLCanvasElement;
+        drawBackground(bgCanvas);
+    }, []);
+
+    useEffect(() => {
+        const drawCanvas = document.getElementById('drawing-canvas') as HTMLCanvasElement;
+        drawLayout(drawCanvas, layout);
+    }, [layout]);
+
+    useEffect(() => {
+        const selectCanvas = document.getElementById('selection-canvas') as HTMLCanvasElement;
+        if (initialTilePos && currentTilePos) {
+            drawSelection(selectCanvas, initialTilePos, currentTilePos);
+        }
+        else {
+            clearCanvas(selectCanvas);
+        }
+    }, [initialTilePos, currentTilePos]);
+
     return (
       <div className="h-screen p-4 items-center justify-items-center">
         <div className="flex flex-col text-amber-900 bg-amber-50 h-full w-full rounded-lg p-4 items-center flex-none overflow-hidden gap-3">
@@ -325,25 +364,23 @@ export default function RanchPlanner() {
                     </button>
                 </div>
             </div>
-          <div className="flex flex-col border-4 border-amber-400 w-full h-full rounded">
+          <div className="flex flex-col flex-grow border-4 border-amber-400 w-full rounded flex-nowrap overflow-hidden">
             <div className="flex flex-row flex-nowrap w-full overflow-x-auto content-center py-1 px-5 gap-2 bg-amber-200 border-b-3 border-amber-400 shrink-0">
                 {generateButtonElements()}
             </div>
-            <div className="flex grow bg-amber-100">
-              <AutoSizer>
-                {({ height, width }) => (
-                  <Grid
-                    columnCount={117}
-                    columnWidth={zoomLevels[zoomLevel]}
-                    height={height}
-                    rowCount={73}
-                    rowHeight={zoomLevels[zoomLevel]}
-                    width={width}
-                  >
-                    {Cell}
-                  </Grid>
-                )}
-              </AutoSizer>
+            <div className="grid flex-grow bg-amber-100 overflow-scroll w-full">
+                <div className="flex place-content-center h-full relative" style={{width: getCanvasWidth(), height: getCanvasHeight()}}>
+                    <p></p>
+                    <canvas id="background-canvas"
+                        className="w-full h-full absolute top-0 left-0"/>
+                    <canvas id="drawing-canvas"
+                        className="w-full h-full absolute top-0 left-0 z-10"/>
+                    <canvas id="selection-canvas"
+                        className="w-full h-full absolute top-0 left-0 z-20"
+                        onMouseDown={onCanvasMouseDown}
+                        onMouseUp={onCanvasMouseUp}
+                        onMouseMove={onCanvasMouseMove}/>
+                </div>
             </div>
           </div>
         </div>

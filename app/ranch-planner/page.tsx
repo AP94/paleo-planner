@@ -211,7 +211,7 @@ export default function RanchPlanner() {
         setCurrentTilePos(layoutPosition);
     }
 
-    const onCanvasMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    const onCanvasMouseUp = () => {
         // draw tiles
         const setTile = (type: TileType) => {
             if (initialTilePos && currentTilePos) {

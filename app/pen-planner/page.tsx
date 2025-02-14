@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 import { saveAs } from 'file-saver';
-import { Biome, Dino, Diet, DinoSpecies, FarmSkill, Flavor, Size, Social, WildSkill, Pen, FoodType } from "@/resources/types";
+import { Biome, Dino, Diet, DinoSpecies, Size, Pen, FoodType } from "@/resources/types";
 import DinoList from "./components/dino-list"
 import PenList from "./components/pen-list";
 import SpeciesSelect from "./components/species-select";

@@ -468,6 +468,17 @@ export const Wuerhosaurus: DinoSpecies = {
     farmSkill: FarmSkill.Harvester
 };
 
+export const LuckySpecies: DinoSpecies = {
+    name: "Lucky",
+    image: "/images/dinos/Lucky.png",
+    size: Size.Medium,
+    social: Social.Herd,
+    diet: Diet.Herbivore,
+    biome: Biome.Farm, // "None"
+    flavor: Flavor.Juicy,
+    wildSkill: WildSkill.Sprinter,
+    farmSkill: FarmSkill.Clearer
+};
 
 export const allSpecies = [
     Allosaurus,

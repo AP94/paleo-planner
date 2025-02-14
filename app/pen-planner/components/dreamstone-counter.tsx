@@ -58,6 +58,24 @@ export default function DreamstoneCounter(data: DreamstoneCounterData) {
                     }}
                     size="md"
                     radius="sm"
+                    isSelected={data.ignoreLucky}
+                    onValueChange={data.onIgnoreLuckyToggled}
+                    >
+                    Hide lucky
+                </Checkbox>
+            </div>
+            <div className="flex items-center justify-center min-h-6">
+                <Checkbox
+                    classNames={{
+                        base: cn(
+                        "inline-flex ml-1",
+                        "items-center justify-start",
+                        "cursor-pointer w-full rounded-lg p-0 mr-0"
+                        ),
+                        label: "text-inherit text-center w-24 sm:w-28 sm:text-lg",
+                    }}
+                    size="md"
+                    radius="sm"
                     isSelected={ignoreDSLimit}
                     onValueChange={toggleIgnoreDSLimit}
                     >

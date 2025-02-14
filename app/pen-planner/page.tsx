@@ -8,18 +8,7 @@ import DinoList from "./components/dino-list"
 import PenList from "./components/pen-list";
 import SpeciesSelect from "./components/species-select";
 import DreamstoneCounter from "./components/dreamstone-counter";
-
-const LuckySpecies: DinoSpecies = {
-    name: "Lucky",
-    image: "/images/dinos/Lucky.png",
-    size: Size.Medium,
-    social: Social.Herd,
-    diet: Diet.Herbivore,
-    biome: Biome.Farm, // "None"
-    flavor: Flavor.Juicy,
-    wildSkill: WildSkill.Sprinter,
-    farmSkill: FarmSkill.Clearer
-};
+import { LuckySpecies } from "@/resources/dino-species";
 
 const lucky: Dino = {
     id: nanoid(),
@@ -37,7 +26,42 @@ export default function PenPlanner() {
     const [pens, setPens] = useState<Pen[]>([]);
     const [largeDreamstoneCount, setLargeDreamstoneCount] = useState(largeDreamstoneLimit - 1);
     const [smallDreamstoneCount, setSmallDreamstoneCount] = useState(smallDreamstoneLimit);
+    const [hideLucky, setHideLucky] = useState<boolean>(false);
     
+    const hasLucky = (pen: Pen): boolean => {
+        for (let i = 0; i < pen.dinos.length; i++) {
+            if (pen.dinos[i].species.name === LuckySpecies.name)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    const toggleHideLucky = () => {
+        // Re-add lucky
+        if (hideLucky) {
+            setDinos(dinos => [...dinos, lucky]);
+            setLargeDreamstoneCount(count => count - 1);
+        }
+        // Remove lucky
+        else {
+            setDinos(dinos => {
+                return dinos.filter(ranchDino => ranchDino.species.name !== LuckySpecies.name);
+            });
+            setPens(pens => {
+                return pens.map(pen => {
+                    return hasLucky(pen) ? {
+                        ...pen,
+                        dinos: pen.dinos.filter(dino => dino.species.name !== LuckySpecies.name)
+                    } : pen
+                })
+            })
+            setLargeDreamstoneCount(count => count + 1);
+        }
+        setHideLucky(hide => !hide);
+    }
 
     const toggleShowDinoSelection = () => {
         setShowDinoSelection(show => !show);
@@ -355,8 +379,6 @@ export default function PenPlanner() {
     useEffect(() => {
         const cachedSetup = getCookieValue("paleo-pen-planner");
 
-        console.log(cachedSetup);
-
         if (cachedSetup) {
             loadConfigString(cachedSetup);
         }
@@ -406,6 +428,7 @@ export default function PenPlanner() {
                     <DinoList 
                         dinos={dinos}
                         selectedDinoID={selectedDinoID}
+                        hideLucky={hideLucky}
                         onDinoClicked={selectOrDeselectDino}
                         onRemoveDinoClicked={removeDino}
                         onAddDinoClicked={toggleShowDinoSelection}
@@ -415,6 +438,7 @@ export default function PenPlanner() {
                 </div>
                 <PenList
                     pens={pens}
+                    hideLucky={hideLucky}
                     onPenClicked={addSelectedDinoToPen}
                     onRemovePenClicked={removePen}
                     onRemoveDinoClicked={removeDinoFromPen}
@@ -427,6 +451,8 @@ export default function PenPlanner() {
                 hidden={showDinoSelection}
                 largeDSCount={largeDreamstoneCount}
                 smallDSCount={smallDreamstoneCount}
+                ignoreLucky={hideLucky}
+                onIgnoreLuckyToggled={toggleHideLucky}
                 convertSmallDSToLarge={convertSmallDSToLarge}
                 convertLargeDSToSmall={convertLargeDSToSmall}                
             />

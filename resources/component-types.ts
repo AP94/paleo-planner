@@ -3,6 +3,7 @@ import { Biome, Dino, DinoSpecies, FoodType, Pen } from "./types";
 export interface DinoListData {
     dinos: Dino[];
     selectedDinoID: string;
+    hideLucky: boolean;
     onDinoClicked: (dinoID: string) => void;
     onRemoveDinoClicked: (dino: Dino) => void;
     onAddDinoClicked: () => void;
@@ -14,12 +15,15 @@ export interface DreamstoneCounterData {
     hidden: boolean;
     largeDSCount: number;
     smallDSCount: number;
+    ignoreLucky: boolean;
+    onIgnoreLuckyToggled: () => void;
     convertSmallDSToLarge: () => void;
     convertLargeDSToSmall: () => void;
 }
 
 export interface PenListData {
     pens: Pen[];
+    hideLucky: boolean;
     onPenClicked: (penID: string) => void;
     setPenBiome: (penID: string, biome: Biome) => void;
     setPenFoodType: (penID: string, foodType: FoodType) => void;

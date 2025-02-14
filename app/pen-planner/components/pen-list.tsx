@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { PenListData } from "@/resources/component-types";
 import { Biome, Diet, FoodType, Pen, Size, Social } from "@/resources/types";
+import { LuckySpecies } from "@/resources/dino-species";
 
 export default function PenList(data: PenListData) {
 
@@ -38,7 +39,9 @@ export default function PenList(data: PenListData) {
     }
 
     const getPenDinoElements = (pen: Pen) => {
-        return pen.dinos.map((dino) => (
+        const penDinos = data.hideLucky ? pen.dinos.filter(dino => dino.species.name !== LuckySpecies.name) : pen.dinos;
+
+        return penDinos.map((dino) => (
             <div key={dino.id}
                 className="flex flex-col items-center w-full place-content-between bg-amber-300 border-3 rounded border-amber-400 p-1 sm:p-2 sm:gap-1">
                 <div className="flex flex-row self-end h-0">
